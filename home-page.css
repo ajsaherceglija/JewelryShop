@@ -1,0 +1,90 @@
+* {
+    box-sizing: border-box;
+    font-family: "Pensum Display", serif;
+    color: #b99976;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+body {
+    background: url("images/background.jpg") no-repeat center;
+    background-size: cover;
+    min-height: 100vh;
+}
+.search-box {
+    position: relative;
+    display: none;
+}
+
+.search-box.active {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;
+    width: 100%;
+}
+#search-input {
+    width: 60%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #b99976;
+    border-radius: 25px;
+    outline: none;
+}
+#search-results {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 10;
+}
+#search-results div {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+.product-grid, .results_number {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: auto;
+    width: 60%;
+}
+.product {
+    width: calc(25% - 20px);
+    margin: 10px;
+    text-align: center;
+}
+
+.product-details {
+    margin-top: 10px;
+}
+.product-name {
+    font-weight: bold;
+}
+
+.product-description {
+    color: #666;
+}
+
+@media screen and (max-width: 1100px) {
+    #search-input, .product-grid {
+        width: 100%;
+    }
+    .product {
+        width: calc(33% - 20px);
+    }
+}
+@media screen and (max-width: 500px) {
+    .search-box {
+        margin-top: 60px;
+    }
+    #search-input {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .product {
+        width: calc(50% - 20px);
+    }
+}

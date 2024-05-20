@@ -1,0 +1,215 @@
+* {
+    box-sizing: border-box;
+    font-family: "Pensum Display", serif;
+    color: #b99976;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+.login-register {
+    background: url("images/background.jpg") no-repeat center;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.search-box {
+    position: relative;
+    display: none;
+}
+
+.search-box.active {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;
+    width: 100%;
+}
+#search-input {
+    width: 60%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #b99976;
+    border-radius: 25px;
+    outline: none;
+}
+#search-results {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 10;
+}
+#search-results div {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+.product-grid, .results_number {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: auto;
+    width: 60%;
+}
+.product {
+    width: calc(25% - 20px);
+    margin: 10px;
+    text-align: center;
+}
+
+.product-details {
+    margin-top: 10px;
+}
+.product-name {
+    font-weight: bold;
+}
+
+.product-description {
+    color: #666;
+}
+.wrapper {
+    margin: auto;
+    width: 420px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    padding: 50px 40px;
+}
+.wrapper h1 {
+    font-size: 36px;
+    text-align: center;
+}
+.input_box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+.input_box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    outline: none;
+    border: 2px solid;
+    border-radius: 40px;
+    font-size: 16px;
+    padding: 20px 45px 20px 20px;
+}
+.input_box input::placeholder {
+    color: #b99976;
+}
+.input_box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+.error {
+    color: #c00c0c;
+    font-size: 14px;
+    margin: -15px 0 15px;
+    font-weight: normal;
+}
+.btn {
+    width: 100%;
+    height: 40px;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    background: #b99976;
+    box-shadow: 0 0 10px #00000019;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+}
+.register_link {
+    font-size: 20px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+.register_link p a {
+    color: #b99976;
+    text-decoration: none;
+    font-weight: 600;
+}
+.register_link p a:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 1100px) {
+    #search-input, .product-grid {
+        width: 100%;
+    }
+    .product {
+        width: calc(33% - 20px);
+    }
+    .wrapper {
+        width: 300px;
+        padding: 30px 20px;
+    }
+    .wrapper h1 {
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+    .input_box {
+        height: 40px;
+        margin: 10px 0;
+    }
+    .input_box input {
+        font-size: 15px;
+        padding: 10px 45px 10px 10px;
+    }
+    .input_box i {
+        right: 10px;
+        top: 50%;
+        font-size: 15px;
+    }
+    .error {
+        font-size: 13px;
+        margin: 0 0 15px;
+    }
+    .btn {
+        margin-top: 10px;
+        height: 30px;
+        font-size: 15px;
+    }
+    .register_link {
+        font-size: 14px;
+        margin: 10px 0 0;
+    }
+}
+@media screen and (max-width: 500px) {
+    .search-box {
+        margin-top: 60px;
+    }
+    #search-input {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .product {
+        width: calc(50% - 20px);
+    }
+    .wrapper {
+        width: 250px;
+    }
+    .input_box {
+        height: 35px;
+    }
+    .input_box input {
+        font-size: 13px;
+    }
+    .input_box i {
+        font-size: 13px;
+    }
+    .error {
+        font-size: 10px;
+    }
+    .register_link {
+        font-size: 12px;
+    }
+}
