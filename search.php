@@ -13,13 +13,13 @@ if (isset($_GET['query'])) {
 
         echo "<div class='product-grid'>";
         while ($row = $result->fetch_assoc()) {
-            echo "<div class='product'>";
+            echo "<a href='/jewelry_shop/product.php?id={$row["pid"]}' class='product'>";
             echo "<img src='images/{$row["p_image"]}' alt='{$row["p_name"]}' style='width: 100px; height: 100px;'>";
             echo "<div class='product-details'>";
             echo "<div class='product-name'>" . $row["p_name"] . "</div>";
             echo "<div class='product-description'>" . $row["description"] . "</div>";
             echo "</div>";
-            echo "</div>";
+            echo "</a>";
         }
         echo "</div>";
     } else {

@@ -51,14 +51,13 @@ body {
     margin: auto;
     width: 60%;
 }
+.product-grid a {
+    text-decoration: none;
+}
 .product {
     width: calc(25% - 20px);
     margin: 10px;
     text-align: center;
-}
-
-.product-details {
-    margin-top: 10px;
 }
 .product-name {
     font-weight: bold;
@@ -66,6 +65,7 @@ body {
 
 .product-description {
     color: #666;
+    font-size: 10px;
 }
 
 @media screen and (max-width: 1100px) {

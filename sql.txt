@@ -1,0 +1,87 @@
+CREATE TABLE wishlists (
+WID            INT AUTO_INCREMENT PRIMARY KEY,
+date_added     DATE NOT NULL,
+valid_until    DATE,
+w_comment      VARCHAR(200),
+w_product      INT NOT NULL,
+people         INT NOT NULL,
+FOREIGN KEY (people) REFERENCES people(PID),
+FOREIGN KEY (w_product) REFERENCES products(PID)
+);
+
+CREATE TABLE shopping_bag (
+SID            INT AUTO_INCREMENT PRIMARY KEY,
+quantity       INT NOT NULL,
+price          DECIMAL(10, 2) NOT NULL,
+s_order        INT NOT NULL,
+s_product      INT NOT NULL,
+FOREIGN KEY (s_order) REFERENCES orders(OID),
+FOREIGN KEY (s_product) REFERENCES products(PID)
+);
+
+CREATE TABLE orders (
+OID            INT AUTO_INCREMENT PRIMARY KEY,
+o_address       INT NOT NULL,
+o_date          DATE NOT NULL,
+FOREIGN KEY (o_address) REFERENCES addresses(AID)
+);
+
+CREATE TABLE addresses (
+AID            INT AUTO_INCREMENT PRIMARY KEY,
+country        VARCHAR(50) NOT NULL,
+city           VARCHAR(50) NOT NULL,
+postal_code    VARCHAR(20) NOT NULL,
+a_address      VARCHAR(100) NOT NULL,
+people         INT NOT NULL,
+FOREIGN KEY (people) REFERENCES people(PID)
+);
+
+CREATE TABLE reviews (
+RID             INT AUTO_INCREMENT PRIMARY KEY,
+rating          INT CHECK (rating >= 1 AND rating <= 5) NOT NULL,
+r_comment       VARCHAR(500),
+r_date          DATE NOT NULL,
+valid_until     DATE,
+people          INT NOT NULL,
+r_product       INT NOT NULL,
+FOREIGN KEY (people) REFERENCES people(PID),
+FOREIGN KEY (r_product) REFERENCES products(PID)
+);
+
+CREATE TABLE products (
+PID             INT AUTO_INCREMENT PRIMARY KEY,
+category        INT NOT NULL,
+brand           INT NOT NULL,
+image           VARCHAR(200),
+p_name          VARCHAR(200) NOT NULL,
+p_description   VARCHAR(500),
+regular_price   DECIMAL(10, 2),
+current_price   DECIMAL(10, 2),
+quantity        INT NOT NULL,
+FOREIGN KEY (category) REFERENCES categories(CID),
+FOREIGN KEY (brand) REFERENCES brands(BID)
+);
+
+CREATE TABLE brands (
+BID             INT AUTO_INCREMENT PRIMARY KEY,
+b_name          VARCHAR(200) NOT NULL,
+phone           VARCHAR(50),
+email           VARCHAR(50)
+);
+
+CREATE TABLE categories (
+CID             INT AUTO_INCREMENT PRIMARY KEY,
+c_name          VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE people (
+PID         INT AUTO_INCREMENT PRIMARY KEY,
+username    VARCHAR(100) UNICODE NOT NULL,
+p_password  VARCHAR(200) NOT NULL,
+email       VARCHAR(50) UNIQUE NOT NULL,
+f_name      VARCHAR(50),
+l_name      VARCHAR(50),
+DOB         DATE,
+phone       VARCHAR(50),
+p_type      VARCHAR(50) DEFAULT 'user' CHECK (p_type IN ('admin', 'user'))
+);
