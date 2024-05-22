@@ -1,0 +1,150 @@
+* {
+    box-sizing: border-box;
+    font-family: "Pensum Display", serif;
+    color: #b99976;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+body {
+    background: url("images/background.jpg") no-repeat center;
+    background-size: cover;
+    min-height: 100vh;
+    padding-top: 60px;
+}
+
+.product-container {
+    max-width: 800px;
+    display: flex;
+    margin: 20px;
+}
+.product-image {
+    flex: 0 0 80%;
+    padding: 20px;
+    text-align: center;
+    margin-right: 100px;
+}
+.product-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    width: 100%;
+}
+.product-details {
+    flex: 0 0 60%;
+    padding: 20px;
+    font-size: 18px;
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.product-details h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #222;
+}
+.product-details p{
+    margin-bottom: 10px;
+    color: #555;
+}
+.product-description {
+    margin-top: 30px;
+}
+.buttons {
+    display: flex;
+    margin-top: 20px;
+
+}
+.buttons .icon {
+    font-size: 28px;
+    color: #b99976;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.buttons .icon:hover {
+    color: #8a6d56;
+}
+.product-container .buttons .bx-heart{
+    padding-right: 30px;
+}
+.product-container .buttons{
+    margin: 50px;
+    padding-left: 120px;
+}
+
+.buttons button {
+    flex: 1;
+    margin-right: 10px;
+    background-color: #b99976;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+.buttons button:last-child {
+    margin-right: 0;
+}
+
+.buttons button:hover {
+    background-color: #8a6d56;
+}
+
+.search-box {
+    position: relative;
+    display: none;
+}
+
+.search-box.active {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;
+    width: 100%;
+}
+#search-input {
+    width: 60%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #b99976;
+    border-radius: 25px;
+    outline: none;
+}
+#search-results {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 10;
+}
+#search-results div {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+@media screen and (max-width: 1100px) {
+    #search-input, .product-grid {
+        width: 100%;
+    }
+    .product {
+        width: calc(33% - 20px);
+    }
+}
+@media screen and (max-width: 500px) {
+    .search-box {
+        margin-top: 60px;
+    }
+    #search-input {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .product {
+        width: calc(50% - 20px);
+    }
+}

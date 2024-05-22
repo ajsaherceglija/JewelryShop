@@ -39,6 +39,13 @@ if ($result_brands->num_rows > 0) {
     $row = $result_brands->fetch_assoc();
     $brands_columns = array_keys($row);
 }
+$sql_users = "SELECT * FROM people";
+$result_users = $conn->query($sql_users);
+$users_columns = [];
+if ($result_users->num_rows > 0) {
+    $row = $result_users->fetch_assoc();
+    $users_columns = array_keys($row);
+}
 ?>
 
 <!DOCTYPE html>
@@ -173,6 +180,43 @@ if ($result_brands->num_rows > 0) {
             </table>
         </div>
     </div>
+    <div class="admin-options">
+        <a href="javascript:void(0)" onclick="toggleTable('users-table')">Users</a>
+        <div id="users-table" class="admin-table" style="display: none;">
+            <div class="admin-options">
+                <a href="add_user.php">Add User</a>
+            </div>
+            <table>
+                <tr>
+                    <?php foreach ($users_columns as $column): ?>
+                        <th><?php echo $column; ?></th>
+                    <?php endforeach; ?>
+                    <th>Actions</th>
+                </tr>
+                <?php
+                $result_users->data_seek(0);
+                if ($result_users->num_rows > 0) {
+                    while ($row = $result_users->fetch_assoc()) {
+                        echo "<tr>";
+                        foreach ($row as $value) {
+                            echo "<td>" . $value . "</td>";
+                        }
+                        echo "<td >
+                            <div class='edit'>
+                                <a href='edit_user.php?id=" . $row["PID"] . "'>Edit</a>
+                        
+                            </div>
+                        </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='" . (count($users_columns) + 1) . "'>No users found</td></tr>";
+                }
+                ?>
+            </table>
+        </div>
+    </div>
+
     </div>
 <script src="admin.js"></script>
 </body>
