@@ -40,7 +40,8 @@
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    echo '<a href="product.php?pid=' . $row["pid"] . '"><img class="image-item" src="' . $row["p_image"] . '" alt="Product Image" /></a>';
+
+                    echo '<a href="product.php?pid=' . $row["pid"] . '"><img class="image-item" src="images/'. $row["p_image"] . '" alt="Product Image" /></a>';
                 }
             } else {
                 echo "0 results";
