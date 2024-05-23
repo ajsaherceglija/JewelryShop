@@ -82,5 +82,35 @@ $conn->close();
         </div>
     </div>
 </div>
+
+<section id="reviews">
+    <h2>Reviews</h2>
+    <ul>
+        <?php
+        if ($result_reviews && $result_reviews->num_rows > 0) {
+            while ($row = $result_reviews->fetch_assoc()) {
+                ?>
+                <li class="review-item">
+                    <strong><?php echo htmlspecialchars($row['reviewer_name']); ?></strong>:
+                    <span>Rating: <?php echo htmlspecialchars($row['rating']); ?></span><br>
+                    <span><?php echo htmlspecialchars($row['comment']); ?></span>
+                </li>
+                <?php
+            }
+        } else {
+            echo "<li>No reviews available.</li>";
+        }
+        ?>
+    </ul>
+
+    <form class="review-form" action="" method="post">
+        <input type="hidden" name="pid" value="<?php echo $product_id; ?>">
+        <label for="rating">Rating (1-5):</label>
+        <input type="number" id="rating" name="rating" min="1" max="5" required>
+        <label for="comment">Your Review:</label>
+        <textarea id="comment" name="comment" required></textarea>
+        <button type="submit">Submit Review</button>
+    </form>
+</section>
 </body>
 </html>
