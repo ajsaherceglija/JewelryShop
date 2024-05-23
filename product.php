@@ -18,14 +18,14 @@ if(isset($_GET['pid'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if(isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'user') {
-        if(isset($_POST['pid']) && isset($_POST['rating']) && isset($_POST['comment']) && isset($_SESSION['PID'])) {
+    if(isset($_SESSION['user_type'])) {
+        if(isset($_POST['pid']) && isset($_POST['rating']) && isset($_POST['r_comment']) && isset($_SESSION['PID'])) {
             $product_id = $_POST['pid'];
             $rating = $_POST['rating'];
             $comment = $_POST['comment'];
             $people_id = $_SESSION['PID'];
 
-            $sql = "INSERT INTO reviews (rating, comment, r_date, people, product) VALUES (?, ?, CURDATE(), ?, ?)";
+            $sql = "INSERT INTO reviews (rating, r_comment, r_date, people, r_product) VALUES (?, ?, CURDATE(), ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("issi", $rating, $comment, $people_id, $product_id);
             $stmt->execute();
@@ -48,6 +48,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $p_name; ?></title>
     <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="includes/header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -61,7 +62,7 @@ $conn->close();
 
 <div class="product-container">
     <div class="product-image">
-        <img src="<?php echo $image ?>" alt="Product Image" style="max-width: 100%; height: auto;">
+        <img src="images/<?php echo $image ?>" alt="Product Image" style="max-width: 100%; height: auto;">
     </div>
 
     <div class="product-details">
@@ -83,4 +84,5 @@ $conn->close();
     </div>
 </div>
 </body>
+<script src="includes/header.js"></script>
 </html>
