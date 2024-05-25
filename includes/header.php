@@ -16,7 +16,7 @@
     if ($result->num_rows > 0) {
         echo '<nav class="products-bar">';
         while ($row = $result->fetch_assoc()) {
-            echo '<a href="/jewelry_shop/category.php?' . $row["CRID"] . '">' . $row["c_name"] . '</a>';
+            echo '<a href="/jewelry_shop/category.php?CRID=' . $row["CRID"] . '">' . $row["c_name"] . '</a>';
         }
         echo '</nav>';
     } else {

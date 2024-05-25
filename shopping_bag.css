@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+    font-family: "Pensum Display", serif;
+    color: #b99976;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+body {
+    background: url("images/background.jpg") no-repeat center;
+    background-size: cover;
+    min-height: 100vh;
+}
+.shopping-bag-container {
+    width: 80%;
+    margin: 50px auto;
+    text-align: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+}
+#bag-box table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+#bag-box th,
+#bag-box td {
+    padding: 10px;
+    text-align: center;
+}
+.bag-item {
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+}
+.bag-item:last-child {
+    border-bottom: none;
+}
+.item-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+.actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.actions .remove {
+    background-color: #b99976;
+    color: #fff;
+}
+input[type="number"] {
+    width: 60px;
+    text-align: center;
+}
+.total-container {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+.update-button {
+    padding: 10px 20px;
+    background-color: #b99976;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1100px) {
+    .shopping-bag-container {
+        width: 95%;
+    }
+    .item-image img {
+        width: 80px;
+        height: 80px;
+    }
+}
+@media screen and (max-width: 500px) {
+    .item-image img {
+        width: 60px;
+        height: 60px;
+    }
+    .actions button {
+        padding: 3px 5px;
+        font-size: 0.8em;
+    }
+}
