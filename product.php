@@ -8,7 +8,9 @@ $result_reviews = null;
 if (isset($_GET['pid'])) {
     $product_id = $_GET['pid'];
 
-    $sql = "SELECT p_name, current_price, description, brand, p_image, quantity FROM products WHERE pid = $product_id";
+    $sql = "SELECT p_name, current_price, description, brand, p_image, quantity,
+           (SELECT AVG(rating) FROM reviews WHERE product = $product_id) as avg_rating 
+           FROM products WHERE pid = $product_id";
     $result = $conn->query($sql);
 
     if ($result && $row = $result->fetch_assoc()) {
@@ -18,6 +20,7 @@ if (isset($_GET['pid'])) {
         $brand = $row['brand'];
         $image = $row['p_image'];
         $quantity = $row['quantity'];
+        $avg_rating = $row['avg_rating'];
     }
 }
 
@@ -30,11 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $people_id = $_SESSION['user_PID'];
 
             $sql = "INSERT INTO reviews (rating, comment, r_date, people, product) VALUES ($rating, '$comment', CURDATE(), $people_id, $product_id)";
-            if ($conn->query($sql) === TRUE) {
-                echo "Review posted successfully.";
-            } else {
-                echo "Error: " . $conn->error;
-            }
         }
     } else {
         header("Location: login.php");
@@ -56,7 +54,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($p_name); ?></title>
+    <title><?php echo $p_name; ?></title>
     <link rel="stylesheet" href="product.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
@@ -73,19 +71,19 @@ $conn->close();
 
 <div class="product-container">
     <div class="product-image">
-        <img src="<?php echo htmlspecialchars($image); ?>" alt="Product Image" style="max-width: 100%; height: auto;">
+        <img src="<?php echo $image; ?>" alt="Product Image" style="max-width: 100%; height: auto;">
     </div>
 
     <div class="product-details">
-        <h1><?php echo htmlspecialchars($p_name); ?></h1>
+        <h1><?php echo $p_name; ?></h1>
         <div class="product-details">
-            <p>Price: <?php echo htmlspecialchars($current_price); ?> BAM</p>
-            <p>Brand: <?php echo htmlspecialchars($brand); ?></p>
-            <p>Quantity: <?php echo htmlspecialchars($quantity); ?></p>
+            <p>Price: <?php echo $current_price; ?> BAM</p>
+            <p>Brand: <?php echo $brand; ?></p>
+            <p>Quantity: <?php echo $quantity; ?></p>
         </div>
         <div class="product-description">
             <h2>Description</h2>
-            <p><?php echo htmlspecialchars($description); ?></p>
+            <p><?php echo $description; ?></p>
         </div>
 
         <div class="buttons">
@@ -97,15 +95,16 @@ $conn->close();
 
 <section id="reviews">
     <h2>Reviews</h2>
+    <p>Average Rating: <?php echo $avg_rating; ?> / 5</p>
     <ul>
         <?php
         if ($result_reviews && $result_reviews->num_rows > 0) {
             while ($row = $result_reviews->fetch_assoc()) {
                 ?>
                 <li class="review-item">
-                    <strong><?php echo htmlspecialchars($row['reviewer_name']); ?></strong>:
-                    <span>Rating: <?php echo htmlspecialchars($row['rating']); ?></span><br>
-                    <span><?php echo htmlspecialchars($row['comment']); ?></span>
+                    <strong><?php echo $row['reviewer_name']; ?></strong>:
+                    <span>Rating: <?php echo $row['rating']; ?></span><br>
+                    <span><?php echo $row['comment']; ?></span>
                 </li>
                 <?php
             }

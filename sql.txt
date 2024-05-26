@@ -85,3 +85,19 @@ DOB         DATE,
 phone       VARCHAR(50),
 p_type      VARCHAR(50) DEFAULT 'user' CHECK (p_type IN ('admin', 'user'))
 );
+
+create definer = root@localhost trigger update_avg_rating
+    after insert
+    on reviews
+    for each row
+BEGIN
+    DECLARE avg_rating DECIMAL(3,2);
+
+    SELECT AVG(rating) INTO avg_rating
+    FROM reviews
+    WHERE product = NEW.product;
+
+    UPDATE products
+    SET avg_rating = avg_rating
+    WHERE pid = NEW.product;
+END;
