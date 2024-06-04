@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_PID'])) {
 $personId = $_SESSION['user_PID'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Check if quantities are being updated
     if (isset($_POST['quantities'])) {
         $quantities = json_decode($_POST['quantities'], true);
 
