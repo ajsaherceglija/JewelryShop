@@ -9,122 +9,10 @@
     <title>Karalic</title>
     <link rel="stylesheet" href="includes/header.css">
     <link rel="stylesheet" href="home-page.css">
+    <link rel="stylesheet" href="category.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
-
-    <style>
-        .results_number {
-            margin: 20px auto;
-            font-size: 16px;
-            color: #b99976;
-            text-align: center;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            justify-items: center;
-        }
-
-        .sproduct {
-            text-decoration: none;
-            color: inherit;
-            border: none;
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .sproduct:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .sproduct img {
-            width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .product-details {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .product-name {
-            font-weight: bold;
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .product-description {
-            color: #777;
-            margin-bottom: 20px;
-        }
-
-        .product-price {
-            font-weight: bold;
-            font-size: 20px;
-            color: black;
-            margin-bottom: 10px;
-        }
-
-        .cart-icon {
-            font-size: 30px;
-            color: #333;
-            display: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .sproduct:hover .cart-icon {
-            display: block;
-        }
-
-        .pagination {
-            text-align: center;
-            margin-top: 20px;
-            padding-bottom: 20px;
-        }
-
-        .pagination a, .pagination span {
-            display: inline-block;
-            margin: 0 5px;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: #333;
-            background-color: #f2f2f2;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination a:hover {
-            background-color: #ddd;
-        }
-
-        .pagination .current-page {
-            font-weight: bold;
-            background-color: #333;
-            color: white;
-        }
-    </style>
 
     <script>
         function addToCart(productId) {
@@ -149,7 +37,7 @@
     <?php
     require 'includes/db_connection.php';
 
-    $products_per_page = 12; // Promijenjeno na 12 proizvoda po stranici
+    $products_per_page = 12;
     $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $offset = ($current_page - 1) * $products_per_page;
 
