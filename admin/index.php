@@ -47,6 +47,18 @@ if ($result_users->num_rows > 0) {
     $row = $result_users->fetch_assoc();
     $users_columns = array_keys($row);
 }
+
+$sql_products_under_5 = "SELECT p.PID, p.p_name, p.p_description, p.regular_price, p.current_price, 
+                        p.quantity, p.image, c.c_name AS category_name, b.b_name AS brand_name 
+                        FROM products p 
+                        LEFT JOIN categories c ON p.category = c.CID 
+                        LEFT JOIN brands b ON p.brand = b.BID
+                        WHERE p.quantity <= 5"; // Filter products with quantity 5 and under
+
+$result_products_under_5 = $conn->query($sql_products_under_5);
+
+$products_under_5_columns = ['ID', 'Name', 'Description', 'Regular price', 'Current price', 'Quantity', 'Image', 'Category', 'Brand'];
+
 ?>
 
 <!DOCTYPE html>
@@ -104,6 +116,42 @@ if ($result_users->num_rows > 0) {
                     }
                 } else {
                     echo "<tr><td colspan='" . (count($products_columns) + 1) . "'>No products found</td></tr>";
+                }
+                ?>
+            </table>
+        </div>
+    </div>
+    <div class="admin-options">
+        <a href="javascript:void(0)" onclick="toggleTable('products-under-5-table')">Low Stock Products</a>
+        <div id="products-under-5-table" class="admin-table" style="display: none;">
+            <table>
+                <tr>
+                    <?php foreach ($products_under_5_columns as $column): ?>
+                        <th><?php echo $column; ?></th>
+                    <?php endforeach; ?>
+                    <th>Actions</th>
+                </tr>
+                <?php
+                if ($result_products_under_5->num_rows > 0) {
+                    while ($row = $result_products_under_5->fetch_assoc()) {
+                        echo "<tr>";
+                        foreach ($row as $key => $value) {
+                            if ($key === 'image') {
+                                echo "<td><img src='$value' alt='Product Image' style='max-width: 100px; max-height: 100px;'></td>";
+                            } else {
+                                echo "<td>" . $value . "</td>";
+                            }
+                        }
+                        echo "<td >
+                                <div class='edit'>
+                                    <a href='edit_product.php?id=" . $row["PID"] . "'>Edit</a> | 
+                                    <a href='' onclick='deleteProduct(" . $row["PID"] . ")'>Delete</a>
+                                </div>
+                            </td>";
+                        echo "</tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='" . (count($products_under_5_columns) + 1) . "'>No low stock products</td></tr>";
                 }
                 ?>
             </table>
@@ -190,7 +238,9 @@ if ($result_users->num_rows > 0) {
             <table>
                 <tr>
                     <?php foreach ($users_columns as $column): ?>
-                        <th><?php echo $column; ?></th>
+                        <?php if ($column !== 'p_password'): ?>
+                            <th><?php echo $column; ?></th>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                     <th>Actions</th>
                 </tr>
@@ -199,21 +249,22 @@ if ($result_users->num_rows > 0) {
                 if ($result_users->num_rows > 0) {
                     while ($row = $result_users->fetch_assoc()) {
                         echo "<tr>";
-                        foreach ($row as $value) {
-                            echo "<td>" . $value . "</td>";
+                        foreach ($row as $key => $value) {
+                            if ($key !== 'p_password') {
+                                echo "<td>" . $value . "</td>";
+                            }
                         }
-                        echo "<td >
-                            <div class='edit'>
-                                <a href='edit_user.php?id=" . $row["PID"] . "'>Edit</a>
-                        
-                            </div>
-                        </td>";
+                        echo "<td>
+                <div class='edit'>
+                    <a href='edit_user.php?id=" . $row["PID"] . "'>Edit</a>
+                </div>
+            </td>";
                         echo "</tr>";
                     }
                 } else {
                     echo "<tr><td colspan='" . (count($users_columns) + 1) . "'>No users found</td></tr>";
                 }
-                ?>
+            ?>
             </table>
         </div>
     </div>
