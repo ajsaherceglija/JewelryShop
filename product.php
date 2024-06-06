@@ -1,9 +1,18 @@
 <?php
+global $conn;
 require 'includes/header_sessions.php';
 require 'includes/db_connection.php';
 
 $p_name = $current_price = $description = $brand = $image = $quantity = "";
 $result_reviews = null;
+
+if (isset($_GET['wishlist'])) {
+    if ($_GET['wishlist'] == 'added') {
+        echo '<p class="wishlist-message">Product added to wishlist.</p>';
+    } elseif ($_GET['wishlist'] == 'exists') {
+        echo '<p class="wishlist-message">Product is already in your wishlist.</p>';
+    }
+}
 
 if (isset($_GET['pid'])) {
     $product_id = $_GET['pid'];
@@ -44,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $sql_reviews = "SELECT r.rating, r.comment, p.f_name AS reviewer_name 
                 FROM reviews r 
-                JOIN people p ON r.people = p.PID 
+                JOIN people p ON r.people = p.pid 
                 WHERE r.product = $product_id";
 $result_reviews = $conn->query($sql_reviews);
 
@@ -73,7 +82,7 @@ $conn->close();
 
 <div class="product-container">
     <div class="product-image">
-        <img src="<?php echo htmlspecialchars($image); ?>" alt="Product Image" style="max-width: 100%; height: auto;">
+        <img src="images/<?php echo htmlspecialchars($image); ?>" alt="Product Image" style="max-width: 100%; height: auto;">
     </div>
 
     <div class="product-details">
@@ -89,8 +98,14 @@ $conn->close();
         </div>
 
         <div class="buttons">
-            <a href="" title="Wishlist"><i class='bx bx-heart icon'></i></a>
-            <a href="" title="Shopping Bag"><i class='bx bx-shopping-bag icon'></i></a>
+            <form action="add_to_wishlist.php" method="post">
+                <input type="hidden" name="pid" value="<?php echo $product_id; ?>">
+                <button type="submit" title="Wishlist"><i class='bx bx-heart icon'></i></button>
+            </form>
+            <form action="add_to_cart.php" method="post">
+                <input type="hidden" name="pid" value="<?php echo $product_id; ?>">
+                <button type="submit" title="Add to Cart"><i class='bx bx-shopping-bag icon'></i></button>
+            </form>
         </div>
     </div>
 </div>

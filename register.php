@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require 'includes/header_sessions.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,9 +24,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $insert_query = "INSERT INTO people (username, email, p_password) VALUES ('$username', '$email', '$hashed_password')";
             if ($conn->query($insert_query) === TRUE) {
-                $_SESSION['success_message'] = "Registration successful";
-                header("Location: login.php");
-                exit();
+                $user_id = $conn->insert_id;
+                $insert_address_query = "INSERT INTO addresses (people) VALUES ('$user_id')";
+                if ($conn->query($insert_address_query) === TRUE) {
+                    $_SESSION['success_message'] = "Registration successful";
+                    header("Location: login.php");
+                    exit();
+                } else {
+                    $_SESSION['error_message'] = "Error: " . $conn->error;
+                }
+
             } else {
                 $_SESSION['error_message'] = "Error: " . $conn->error;
             }

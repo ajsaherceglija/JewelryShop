@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require 'includes/header_sessions.php';
 require 'includes/db_connection.php';
 
@@ -10,18 +11,19 @@ if (!isset($_SESSION['user_PID'])) {
 $personId = $_SESSION['user_PID'];
 $currentDate = date('Y-m-d');
 
-$sql = "SELECT s.SID, p.p_name, p.current_price, p.p_image, s.quantity AS bag_quantity, s.date_added
-        FROM shopping_bag s
-        JOIN products p ON p.pid = s.s_product
-        WHERE s.user = $personId";
+$sql = "SELECT od.OID, p.p_name, p.current_price, p.p_image, od.quantity, o.o_date, o.total_price
+        FROM order_details od
+        JOIN products p ON p.pid = od.o_product
+        JOIN orders o ON o.OID = od.o_order
+        JOIN addresses a ON a.AID = o.o_address
+        WHERE o.status = 'processing' AND a.people = $personId";
 $result = $conn->query($sql);
 
 $bagItems = [];
-$totalPrice = 0;
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $row['total_price'] = $row['current_price'] * $row['bag_quantity'];
-        $totalPrice += $row['total_price'];
+        $totalItemPrice = $row['current_price'] * $row['quantity'];
+        $row['total_item_price'] = $totalItemPrice;
         $bagItems[] = $row;
     }
 }
@@ -65,31 +67,34 @@ if ($result->num_rows > 0) {
                     </thead>
                     <tbody>
                     <?php foreach ($bagItems as $item): ?>
-                        <tr class="shopping-bag-item" data-sid="<?php echo $item['SID']; ?>">
+                        <tr class="shopping-bag-item" data-oid="<?php echo $item['OID']; ?>">
                             <td class="item-image"><img src="images/<?php echo $item['p_image']; ?>" alt="<?php echo $item['p_name']; ?>"></td>
                             <td><?php echo $item['p_name']; ?></td>
-                            <td><?php echo date('Y-m-d', strtotime($item['date_added'])); ?></td>
+                            <td><?php echo date('Y-m-d', strtotime($item['o_date'])); ?></td>
                             <td>
-                                <input type="number" name="quantity" data-sid="<?php echo $item['SID']; ?>" data-price="<?php echo $item['current_price']; ?>" value="<?php echo $item['bag_quantity']; ?>" min="1">
+                                <input type="number" name="quantity" data-oid="<?php echo $item['OID']; ?>" data-price="<?php echo $item['current_price']; ?>" value="<?php echo $item['quantity']; ?>" min="1">
                             </td>
-                            <td class="item-total" data-price="<?php echo $item['current_price']; ?>">$<?php echo number_format($item['total_price'], 2); ?></td>
+                            <td class="item-total" data-price="<?php echo $item['current_price']; ?>">$<?php echo number_format($item['total_item_price'], 2); ?></td>
                             <td class="actions">
-                                <button type="button" class="remove" onclick="removeFromBag(<?php echo $item['SID']; ?>)">X</button>
+                                <button type="button" class="remove" onclick="removeFromBag(<?php echo $item['OID']; ?>)">X</button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     <tr>
                         <td colspan="3"></td>
                         <td>
-                            <button type="submit" class="update-button">Update</button>
+                            <button type="submit" class="update-button">Update Quantity</button>
                         </td>
-                        <td class="total-price" id="total-price">$<?php echo number_format($totalPrice, 2); ?></td>
+                        <td class="total-price" id="total-price">$<?php echo $item['total_price']; ?></td>
                         <td colspan="2"></td>
                     </tr>
                     </tbody>
                 </table>
             </form>
         <?php endif; ?>
+        <div class="checkout-container">
+            <button type="button" class="checkout-button" onclick="window.location.href='order.php'">Checkout</button>
+        </div>
     </div>
 </div>
 

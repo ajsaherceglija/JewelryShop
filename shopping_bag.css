@@ -69,7 +69,21 @@ input[type="number"] {
     border-radius: 5px;
     cursor: pointer;
 }
-
+.checkout-container {
+    margin-top: 15px;
+}
+.checkout-button {
+    font-size: 20px;
+    padding: 10px 20px;
+    background-color: #b99976;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.update-button:hover, .checkout-button:hover, .actions button:hover{
+    opacity: 70%;
+}
 @media screen and (max-width: 1100px) {
     .shopping-bag-container {
         width: 95%;

@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require 'includes/header_sessions.php';
 require 'includes/db_connection.php';
 
@@ -9,7 +10,7 @@ if (!isset($_SESSION['user_PID'])) {
 $personId = $_SESSION['user_PID'];
 $currentDate = date('Y-m-d');
 
-$sql = "SELECT w.WID, p.p_name, p.current_price, p.quantity, p.p_image, w.w_comment, w.date_added
+$sql = "SELECT w.WID, p.p_name, p.current_price, p.quantity, p.p_image, w.w_comment, w.date_added, p.pid
         FROM wishlists w, products p
         WHERE p. pid = w.w_product AND w.people = $personId
         AND (w.valid_until IS NULL OR w.valid_until > '$currentDate')";
@@ -43,7 +44,6 @@ if ($result->num_rows > 0) {
 </div>
 <div class="wishlist-container">
     <h2>My Wishlist</h2>
-    <form id="update-wishlist-form">
         <div id="wishlist-box">
             <?php if (empty($wishlistItems)): ?>
                 <p>No products in your wishlist.</p>
@@ -69,10 +69,13 @@ if ($result->num_rows > 0) {
                             <td><?php echo ($item['quantity'] > 0) ? 'Available' : 'Out of Stock'; ?></td>
                             <td><?php echo date('Y-m-d', strtotime($item['date_added'])); ?></td>
                             <td>
-                                <input type="text" name="comment" data-wid="<?php echo $item['WID']; ?>" value="<?php echo htmlspecialchars($item['w_comment']); ?>">
+                                <input type="text" name="comment" data-wid="<?php echo $item['WID']; ?>" value="<?php echo $item['w_comment']; ?>">
                             </td>
                             <td class="actions">
-                                <button type="button" class="add-to-cart" onclick="addToCart(<?php echo $item['WID']; ?>)">Add to Cart</button>
+                                <form action="add_to_cart.php" method="post">
+                                    <input type="hidden" name="pid" value="<?php echo $item['pid']; ?>">
+                                    <button type="submit"><i class='bx bx-shopping-bag icon'></i></button>
+                                </form>
                                 <button type="button" class="remove" onclick="removeFromWishlist(<?php echo $item['WID']; ?>)">X</button>
                             </td>
                         </tr>
@@ -80,7 +83,9 @@ if ($result->num_rows > 0) {
                     <tr>
                         <td colspan="5"></td>
                         <td class="update">
-                            <button type="submit" class="update-button">Update</button>
+                            <form id="update-wishlist-form">
+                                <button type="submit" class="update-button">Update Comment</button>
+                            </form>
                         </td>
                         <td colspan="2"></td>
                     </tr>
@@ -88,7 +93,6 @@ if ($result->num_rows > 0) {
                 </table>
             <?php endif; ?>
         </div>
-    </form>
 </div>
 
 </body>
