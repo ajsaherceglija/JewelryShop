@@ -47,17 +47,31 @@ if ($result_users->num_rows > 0) {
     $users_columns = array_keys($row);
 }
 
-$sql_products_under_5 = "SELECT p.PID, p.p_name, p.p_description, p.regular_price, p.current_price, 
-                        p.quantity, p.image, c.c_name AS category_name, b.b_name AS brand_name 
+$sql_products_under_5 = "SELECT p.PID, p.p_name, p.description, p.regular_price, p.current_price, 
+                        p.quantity, p.p_image, c.c_name AS category_name, b.b_name AS brand_name 
                         FROM products p 
-                        LEFT JOIN categories c ON p.category = c.CID 
+                        LEFT JOIN categories c ON p.category = c.CRID 
                         LEFT JOIN brands b ON p.brand = b.BID
-                        WHERE p.quantity <= 5"; // Filter products with quantity 5 and under
+                        WHERE p.quantity <= 5";
 
 $result_products_under_5 = $conn->query($sql_products_under_5);
 
 $products_under_5_columns = ['ID', 'Name', 'Description', 'Regular price', 'Current price', 'Quantity', 'Image', 'Category', 'Brand'];
 
+$sql = "SELECT p.p_name, AVG(r.rating) AS avg_rating
+        FROM products p
+        LEFT JOIN reviews r ON p.PID = r.product
+        GROUP BY p.PID
+        HAVING avg_rating > 0.0";
+$result = $conn->query($sql);
+
+$productNames = [];
+$averageRatings = [];
+
+while ($row = $result->fetch_assoc()) {
+    $productNames[] = $row['p_name'];
+    $averageRatings[] = $row['avg_rating'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -267,7 +281,36 @@ $products_under_5_columns = ['ID', 'Name', 'Description', 'Regular price', 'Curr
             </table>
         </div>
     </div>
+    <canvas id="averageRatingChart" width="300" height="150"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var productNames = <?= json_encode($productNames); ?>;
+        var averageRatings = <?= json_encode($averageRatings); ?>;
 
+        var ctx = document.getElementById('averageRatingChart').getContext('2d');
+        var averageRatingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: productNames,
+                datasets: [{
+                    label: 'Average Rating',
+                    data: averageRatings,
+                    backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                    borderColor: 'rgba(255, 193, 7, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5
+                    }
+                }
+            }
+
+        });
+    </script>
     </div>
 <script src="admin.js"></script>
 </body>
