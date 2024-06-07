@@ -58,6 +58,7 @@ p_description   VARCHAR(500),
 regular_price   DECIMAL(10, 2),
 current_price   DECIMAL(10, 2),
 quantity        INT NOT NULL,
+avg_rating    DECIMAL(3, 2) DEFAULT 0.00 NULL,
 FOREIGN KEY (category) REFERENCES categories(CID),
 FOREIGN KEY (brand) REFERENCES brands(BID)
 );
