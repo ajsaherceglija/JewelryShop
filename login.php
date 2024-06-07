@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require 'includes/header_sessions.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){

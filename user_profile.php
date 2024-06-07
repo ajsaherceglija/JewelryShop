@@ -1,4 +1,5 @@
 <?php
+global $conn;
 session_start();
 require 'includes/db_connection.php';
 
@@ -83,7 +84,7 @@ function addAddress($conn, $user, $country, $city, $postal_code, $address) {
 }
 
 function getAddresses($conn, $user) {
-    $sql = "SELECT * FROM addresses WHERE user='$user'";
+    $sql = "SELECT * FROM addresses WHERE people='$user'";
     $result = $conn->query($sql);
     $addresses = [];
     if ($result->num_rows > 0) {

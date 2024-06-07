@@ -41,7 +41,7 @@ $conn->close();
 <body>
 <h1>Edit Category</h1>
 <form action="" method="post">
-    <label for="CRID">Category ID:</label>
+    <label for="CID">Category ID:</label>
     <input type="text" id="CRID" name="CRID" value="<?php echo $category['CRID'] ?>" readonly><br>
 
     <label for="c_name">New Name:</label>

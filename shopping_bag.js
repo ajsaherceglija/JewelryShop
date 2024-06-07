@@ -1,39 +1,12 @@
-document.getElementById('update-bag-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const quantities = {};
-
-    document.querySelectorAll('input[name="quantity"]').forEach(input => {
-        const sid = input.dataset.sid;
-        const quantity = input.value;
-
-        quantities[sid] = quantity;
-    });
-    updateQuantities(quantities);
+document.getElementById('update-bag-form').addEventListener('change', function(event) {
+    const target = event.target;
+    if (target && target.matches('input[name="quantity"]')) {
+        const oid = target.dataset.oid;
+        const quantity = target.value;
+        updateQuantity(oid, quantity);
+    }
 });
 
-function updateQuantities(quantities) {
-    const formData = new FormData();
-    formData.append('quantities', JSON.stringify(quantities));
-
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                if (xhr.responseText.trim() === 'Success') {
-                    updateTotalPrice();
-                    alert('Shopping bag updated successfully.');
-                } else {
-                    alert('Failed to update shopping bag.');
-                }
-            } else {
-                alert('Error: ' + xhr.statusText);
-            }
-        }
-    };
-    xhr.open('POST', 'update_cart.php', true);
-    xhr.send(formData);
-}
 function updateTotalPrice() {
     let totalPrice = 0;
     document.querySelectorAll('.item-total').forEach(itemTotal => {
@@ -48,25 +21,41 @@ function updateTotalPrice() {
     });
     document.getElementById('total-price').innerText = `$${totalPrice.toFixed(2)}`;
 }
-function removeFromBag(sid) {
-    if (confirm('Are you sure you want to remove this item from your shopping bag?')) {
-        const xhr = new XMLHttpRequest();
+
+function updateQuantity(oid, quantity) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                console.log('Quantity updated successfully.');
+                updateTotalPrice();
+            } else {
+                console.error('Error updating quantity: ' + xhr.responseText);
+            }
+        }
+    };
+    xhr.open('POST', 'update_cart.php');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('oid=' + oid + '&quantity=' + quantity);
+}
+function removeFromBag(oid) {
+    // Confirm removal
+    if (confirm('Are you sure you want to remove this item?')) {
+        var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                if (xhr.responseText.trim() === 'Success') {
-                    const row = document.querySelector(`tr[data-sid="${sid}"]`);
-                    if (row) {
-                        row.remove();
-                        updateTotalPrice();
-                        alert('Item removed from shopping bag successfully.');
-                    }
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var row = document.querySelector('.shopping-bag-item[data-oid="' + oid + '"]');
+                    row.parentNode.removeChild(row);
+                    updateTotalPrice();
                 } else {
-                    console.error('Failed to remove item from shopping bag');
+                    // Handle error
+                    console.error('Error removing item: ' + xhr.responseText);
                 }
             }
         };
-        xhr.open('POST', 'update_cart.php', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send(`remove_sid=${sid}`);
+        xhr.open('POST', 'update_cart.php');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('oid=' + oid);
     }
 }

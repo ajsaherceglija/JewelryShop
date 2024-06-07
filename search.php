@@ -1,4 +1,5 @@
 <?php
+global $conn;
 require 'includes/db_connection.php';
 
 if (isset($_GET['query'])) {

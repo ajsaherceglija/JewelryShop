@@ -1,4 +1,5 @@
 <?php
+global $conn;
 session_start();
 
 require '../includes/db_connection.php';

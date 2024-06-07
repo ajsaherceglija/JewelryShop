@@ -1,0 +1,62 @@
+* {
+    box-sizing: border-box;
+    font-family: "Pensum Display", serif;
+    color: #b99976;
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+body {
+    background: url("images/background.jpg") no-repeat center;
+    background-size: cover;
+    min-height: 100vh;
+}
+.checkout-container {
+    background: white;
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+}
+.checkout-container h2 {
+    text-align: center;
+}
+.shipping-details, .order-summary {
+    margin-bottom: 20px;
+}
+
+.shipping-details label, .order-summary label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.shipping-details input[type="text"], .order-summary input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.order-summary table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-summary th, .order-summary td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.place-order {
+    text-align: right;
+}
+
+.place-order-button {
+    padding: 10px 20px;
+    background-color: #b99976;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.place-order-button:hover {
+    opacity: 70%;
+}

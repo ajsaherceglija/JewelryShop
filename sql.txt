@@ -1,91 +1,155 @@
-CREATE TABLE wishlists (
-WID            INT AUTO_INCREMENT PRIMARY KEY,
-date_added     DATE NOT NULL,
-valid_until    DATE,
-w_comment      VARCHAR(200),
-w_product      INT NOT NULL,
-people         INT NOT NULL,
-FOREIGN KEY (people) REFERENCES people(PID),
-FOREIGN KEY (w_product) REFERENCES products(PID)
+create table if not exists brands
+(
+    BID    int auto_increment
+        primary key,
+    b_name varchar(200) not null,
+    phone  varchar(50)  null,
+    email  varchar(50)  null
 );
 
-CREATE TABLE shopping_bag (
-SID            INT AUTO_INCREMENT PRIMARY KEY,
-quantity       INT NOT NULL,
-price          DECIMAL(10, 2) NOT NULL,
-s_order        INT NOT NULL,
-s_product      INT NOT NULL,
-FOREIGN KEY (s_order) REFERENCES orders(OID),
-FOREIGN KEY (s_product) REFERENCES products(PID)
+create table if not exists categories
+(
+    CRID    int auto_increment
+        primary key,
+    c_name varchar(200) not null
 );
 
-CREATE TABLE orders (
-OID            INT AUTO_INCREMENT PRIMARY KEY,
-o_address       INT NOT NULL,
-o_date          DATE NOT NULL,
-FOREIGN KEY (o_address) REFERENCES addresses(AID)
+create table if not exists people
+(
+    PID        int auto_increment
+        primary key,
+    username   varchar(100)                          not null,
+    p_password varchar(200)                          not null,
+    email      varchar(50)                           not null,
+    f_name     varchar(50)                           null,
+    l_name     varchar(50)                           null,
+    DOB        date                                  null,
+    phone      varchar(50)                           null,
+    p_type     enum ('admin', 'user') default 'user' null,
+    constraint email
+        unique (email),
+    constraint username
+        unique (username)
 );
 
-CREATE TABLE addresses (
-AID            INT AUTO_INCREMENT PRIMARY KEY,
-country        VARCHAR(50) NOT NULL,
-city           VARCHAR(50) NOT NULL,
-postal_code    VARCHAR(20) NOT NULL,
-a_address      VARCHAR(100) NOT NULL,
-people         INT NOT NULL,
-FOREIGN KEY (people) REFERENCES people(PID)
+create table if not exists addresses
+(
+    AID         int auto_increment
+        primary key,
+    country     varchar(50)  not null,
+    city        varchar(50)  not null,
+    postal_code varchar(20)  not null,
+    a_address   varchar(100) not null,
+    people      int          not null,
+    constraint addresses_ibfk_1
+        foreign key (people) references people (PID)
 );
 
-CREATE TABLE reviews (
-RID             INT AUTO_INCREMENT PRIMARY KEY,
-rating          INT CHECK (rating >= 1 AND rating <= 5) NOT NULL,
-r_comment       VARCHAR(500),
-r_date          DATE NOT NULL,
-valid_until     DATE,
-people          INT NOT NULL,
-r_product       INT NOT NULL,
-FOREIGN KEY (people) REFERENCES people(PID),
-FOREIGN KEY (r_product) REFERENCES products(PID)
+create index people
+    on addresses (people);
+
+create table if not exists orders
+(
+    OID       int auto_increment
+        primary key,
+    o_address int         not null,
+    status    varchar(50) null,
+    o_date    date        not null,
+    constraint orders_ibfk_1
+        foreign key (o_address) references addresses (AID)
 );
 
-CREATE TABLE products (
-PID             INT AUTO_INCREMENT PRIMARY KEY,
-category        INT NOT NULL,
-brand           INT NOT NULL,
-image           VARCHAR(200),
-p_name          VARCHAR(200) NOT NULL,
-p_description   VARCHAR(500),
-regular_price   DECIMAL(10, 2),
-current_price   DECIMAL(10, 2),
-quantity        INT NOT NULL,
-avg_rating    DECIMAL(3, 2) DEFAULT 0.00 NULL,
-FOREIGN KEY (category) REFERENCES categories(CID),
-FOREIGN KEY (brand) REFERENCES brands(BID)
+create index o_address
+    on orders (o_address);
+
+create table if not exists products
+(
+    PID           int auto_increment
+        primary key,
+    category      int            not null,
+    brand         int            not null,
+    image         varchar(200)   null,
+    p_name        varchar(200)   not null,
+    p_description varchar(500)   null,
+    regular_price decimal(10, 2) null,
+    current_price decimal(10, 2) null,
+    quantity      int            not null,
+    constraint products_ibfk_1
+        foreign key (category) references categories (CRID),
+    constraint products_ibfk_2
+        foreign key (brand) references brands (BID)
 );
 
-CREATE TABLE brands (
-BID             INT AUTO_INCREMENT PRIMARY KEY,
-b_name          VARCHAR(200) NOT NULL,
-phone           VARCHAR(50),
-email           VARCHAR(50)
+create table if not exists order_details
+(
+    OID       int auto_increment
+        primary key,
+    quantity  int            not null,
+    price     decimal(10, 2) null,
+    o_order   int            not null,
+    o_product int            not null,
+    constraint order_details_ibfk_1
+        foreign key (o_order) references orders (OID),
+    constraint order_details_ibfk_2
+        foreign key (o_product) references products (PID)
 );
 
-CREATE TABLE categories (
-CID             INT AUTO_INCREMENT PRIMARY KEY,
-c_name          VARCHAR(200) NOT NULL
+create index o_order
+    on order_details (o_order);
+
+create index o_product
+    on order_details (o_product);
+
+create index brand
+    on products (brand);
+
+create index category
+    on products (category);
+
+create table if not exists reviews
+(
+    RID         int auto_increment
+        primary key,
+    rating      int          not null,
+    r_comment   varchar(500) null,
+    r_date      date         not null,
+    valid_until date         null,
+    people      int          not null,
+    product   int          not null,
+    constraint reviews_ibfk_1
+        foreign key (people) references people (PID),
+    constraint reviews_ibfk_2
+        foreign key (product) references products (PID),
+    check ((`rating` >= 1) and (`rating` <= 5))
 );
 
-CREATE TABLE people (
-PID         INT AUTO_INCREMENT PRIMARY KEY,
-username    VARCHAR(100) UNICODE NOT NULL,
-p_password  VARCHAR(200) NOT NULL,
-email       VARCHAR(50) UNIQUE NOT NULL,
-f_name      VARCHAR(50),
-l_name      VARCHAR(50),
-DOB         DATE,
-phone       VARCHAR(50),
-p_type      VARCHAR(50) DEFAULT 'user' CHECK (p_type IN ('admin', 'user'))
+create index people
+    on reviews (people);
+
+create index product
+    on reviews (product);
+
+create table if not exists wishlists
+(
+    WID         int auto_increment
+        primary key,
+    date_added  date         not null,
+    valid_until date         null,
+    w_comment   varchar(200) null,
+    w_product   int          not null,
+    people      int          not null,
+    constraint wishlists_ibfk_1
+        foreign key (people) references people (PID),
+    constraint wishlists_ibfk_2
+        foreign key (w_product) references products (PID)
 );
+
+create index people
+    on wishlists (people);
+
+create index w_product
+    on wishlists (w_product);
+
 
 create definer = root@localhost trigger update_avg_rating
     after insert
