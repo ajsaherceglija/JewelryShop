@@ -1,5 +1,6 @@
 <?php
 global $conn;
+require 'includes/header_sessions.php';
 session_start();
 require 'includes/db_connection.php';
 
@@ -123,7 +124,7 @@ if (isset($_POST['add_address'])) {
     $country = $_POST['country'];
     $city = $_POST['city'];
     $postal_code = $_POST['postal_code'];
-    $address = $_POST['address'];
+    $address = $_POST['a_address'];
     addAddress($conn, $user, $country, $city, $postal_code, $address);
 }
 
@@ -174,7 +175,7 @@ $addresses = getAddresses($conn, $user_id);
                     <td><?php echo $address['country']; ?></td>
                     <td><?php echo $address['city']; ?></td>
                     <td><?php echo $address['postal_code']; ?></td>
-                    <td><?php echo $address['address']; ?></td>
+                    <td><?php echo $address['a_address']; ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>

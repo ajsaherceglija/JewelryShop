@@ -5,6 +5,7 @@ require 'includes/db_connection.php';
 
 $p_name = $current_price = $description = $brand = $image = $quantity = "";
 $result_reviews = null;
+$avg_rating = 0.0;
 
 if (isset($_GET['wishlist'])) {
     if ($_GET['wishlist'] == 'added') {
@@ -34,14 +35,27 @@ if (isset($_GET['pid'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_SESSION['user_type'])) {
-        if (isset($_POST['pid']) && isset($_POST['rating']) && isset($_POST['comment']) && isset($_SESSION['user_PID'])) {
+    if (isset($_SESSION['user_type']) && isset($_SESSION['user_PID'])) {
+        if (isset($_POST['pid']) && isset($_POST['rating']) && isset($_POST['comment'])) {
             $product_id = $_POST['pid'];
             $rating = $_POST['rating'];
             $comment = $_POST['comment'];
             $people_id = $_SESSION['user_PID'];
 
-            $sql = "INSERT INTO reviews (rating, comment, r_date, people, product) VALUES ($rating, '$comment', CURDATE(), $people_id, $product_id)";
+            $sql = "INSERT INTO reviews (rating, comment, r_date, people, product) 
+                    VALUES (?, ?, CURDATE(), ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("isii", $rating, $comment, $people_id, $product_id);
+
+            if ($stmt->execute()) {
+                echo "Review submitted successfully!";
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit();
+            } else {
+                echo "Error: " . $stmt->error;
+            }
+
+            $stmt->close();
         }
     } else {
         header("Location: login.php");
