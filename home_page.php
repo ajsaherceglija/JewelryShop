@@ -33,6 +33,7 @@
         <ul class="image-list">
 
             <?php
+            global $conn;
             require 'includes/db_connection.php';
 
             $sql = "SELECT pid, p_image FROM products LIMIT 7";

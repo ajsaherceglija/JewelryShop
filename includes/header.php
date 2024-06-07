@@ -8,6 +8,7 @@
         <i class='bx bx-x' id="x"></i>
     </label>
     <?php
+    global $conn;
     require 'includes/db_connection.php';
 
     $sql = "SELECT CRID, c_name FROM categories";
@@ -16,7 +17,7 @@
     if ($result->num_rows > 0) {
         echo '<nav class="products-bar">';
         while ($row = $result->fetch_assoc()) {
-            echo '<a href="/jewelry_shop/category.php?CRID=' . $row["CRID"] . '">' . $row["c_name"] . '</a>';
+            echo '<a href="category.php?CRID=' . $row["CRID"] . '">' . $row["c_name"] . '</a>';
         }
         echo '</nav>';
     } else {

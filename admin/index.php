@@ -48,12 +48,12 @@ if ($result_users->num_rows > 0) {
     $users_columns = array_keys($row);
 }
 
-$sql_products_under_5 = "SELECT p.PID, p.p_name, p.p_description, p.regular_price, p.current_price, 
-                        p.quantity, p.image, c.c_name AS category_name, b.b_name AS brand_name 
+$sql_products_under_5 = "SELECT p.PID, p.p_name, p.description, p.regular_price, p.current_price, 
+                        p.quantity, p.p_image, c.c_name AS category_name, b.b_name AS brand_name 
                         FROM products p 
-                        LEFT JOIN categories c ON p.category = c.CID 
+                        LEFT JOIN categories c ON p.category = c.CRID 
                         LEFT JOIN brands b ON p.brand = b.BID
-                        WHERE p.quantity <= 5"; // Filter products with quantity 5 and under
+                        WHERE p.quantity <= 5";
 
 $result_products_under_5 = $conn->query($sql_products_under_5);
 
