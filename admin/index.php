@@ -59,11 +59,10 @@ $result_products_under_5 = $conn->query($sql_products_under_5);
 
 $products_under_5_columns = ['ID', 'Name', 'Description', 'Regular price', 'Current price', 'Quantity', 'Image', 'Category', 'Brand'];
 
-$sql = "SELECT p.p_name, AVG(r.rating) AS avg_rating
+$sql = "SELECT p.pid, p.p_name, p.avg_rating
         FROM products p
         LEFT JOIN reviews r ON p.PID = r.product
-        GROUP BY p.PID
-        HAVING avg_rating > 0.0";
+        WHERE avg_rating > 0.0";
 $result = $conn->query($sql);
 
 $productNames = [];
@@ -100,20 +99,20 @@ if (isset($_GET['action']) && isset($_GET['OID'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $sql_orders = "SELECT * FROM orders WHERE status = 'shipped'";
+    $sql_s_orders = "SELECT * FROM orders WHERE (status = 'shipped' OR status = 'finished')";
 
-    if (isset($_GET['date']) && !empty($_GET['date'])) {
+    if (!empty($_GET['date'])) {
         $date = $_GET['date'];
-        $sql_orders .= " AND DATE(o_date) = '$date'";
+        $sql_s_orders .= " AND DATE(o_date) = '$date'";
     }
 
-    if (isset($_GET['from_date']) && isset($_GET['to_date']) && !empty($_GET['from_date']) && !empty($_GET['to_date'])) {
+    if (!empty($_GET['from_date']) && !empty($_GET['to_date'])) {
         $from_date = $_GET['from_date'];
         $to_date = $_GET['to_date'];
-        $sql_orders .= " AND o_date BETWEEN '$from_date' AND '$to_date'";
+        $sql_s_orders .= " AND o_date BETWEEN '$from_date' AND '$to_date'";
     }
 
-    $result_orders = $conn->query($sql_orders);
+    $result_s_orders = $conn->query($sql_s_orders);
 }
 ?>
 
@@ -385,9 +384,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     <th>Total Price</th>
                 </tr>
                 <?php
-                $result_orders->data_seek(0);
-                if ($result_orders->num_rows > 0) {
-                    while ($row = $result_orders->fetch_assoc()) {
+                $result_s_orders->data_seek(0);
+                if ($result_s_orders->num_rows > 0) {
+                    while ($row = $result_s_orders->fetch_assoc()) {
                         ?>
                         <tr>
                             <td><?= $row["OID"] ?></td>
