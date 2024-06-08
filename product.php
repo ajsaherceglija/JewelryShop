@@ -7,6 +7,19 @@ $p_name = $current_price = $description = $brand = $image = $quantity = "";
 $result_reviews = null;
 $avg_rating = 0.0;
 
+function getProductDetails($product_id) {
+    global $conn;
+    $sql = "SELECT p_name, current_price, description, brand, p_image, quantity,
+               (SELECT AVG(rating) FROM reviews WHERE product = $product_id) as avg_rating 
+               FROM products WHERE pid = $product_id";
+    $result = $conn->query($sql);
+
+    if ($result && $row = $result->fetch_assoc()) {
+        return $row;
+    }
+    return null;
+}
+
 if (isset($_GET['wishlist'])) {
     if ($_GET['wishlist'] == 'added') {
         echo '<p class="wishlist-message">Product added to wishlist.</p>';
@@ -17,20 +30,16 @@ if (isset($_GET['wishlist'])) {
 
 if (isset($_GET['pid'])) {
     $product_id = $_GET['pid'];
+    $product_details = getProductDetails($product_id);
 
-    $sql = "SELECT p_name, current_price, description, brand, p_image, quantity,
-           (SELECT AVG(rating) FROM reviews WHERE product = $product_id) as avg_rating 
-           FROM products WHERE pid = $product_id";
-    $result = $conn->query($sql);
-
-    if ($result && $row = $result->fetch_assoc()) {
-        $p_name = $row['p_name'];
-        $current_price = $row['current_price'];
-        $description = $row['description'];
-        $brand = $row['brand'];
-        $image = $row['p_image'];
-        $quantity = $row['quantity'];
-        $avg_rating = $row['avg_rating'];
+    if ($product_details) {
+        $p_name = $product_details['p_name'];
+        $current_price = $product_details['current_price'];
+        $description = $product_details['description'];
+        $brand = $product_details['brand'];
+        $image = $product_details['p_image'];
+        $quantity = $product_details['quantity'];
+        $avg_rating = $product_details['avg_rating'];
     }
 }
 
@@ -66,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $sql_reviews = "SELECT r.rating, r.comment, p.f_name AS reviewer_name 
                 FROM reviews r 
                 JOIN people p ON r.people = p.PID 
-                WHERE r.product = $product_id";
+                WHERE r.product = $product_id AND r.comment IS NOT NULL AND r.comment != ''";
 $result_reviews = $conn->query($sql_reviews);
 
 $conn->close();
@@ -131,8 +140,6 @@ $conn->close();
             while ($row = $result_reviews->fetch_assoc()) {
                 ?>
                 <li class="review-item">
-                    <strong><?php echo $row['reviewer_name']; ?></strong>:
-                    <span>Rating: <?php echo $row['rating']; ?></span><br>
                     <span><?php echo $row['comment']; ?></span>
                 </li>
                 <?php
@@ -148,7 +155,7 @@ $conn->close();
         <label for="rating">Rating (1-5):</label>
         <input type="number" id="rating" name="rating" min="1" max="5" required>
         <label for="comment">Your Review:</label>
-        <textarea id="comment" name="comment" required></textarea>
+        <textarea id="comment" name="comment"></textarea>
         <button type="submit">Submit Review</button>
     </form>
 </section>

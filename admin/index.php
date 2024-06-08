@@ -73,6 +73,31 @@ while ($row = $result->fetch_assoc()) {
     $productNames[] = $row['p_name'];
     $averageRatings[] = $row['avg_rating'];
 }
+
+$sql_orders = "SELECT * FROM orders WHERE status = 'finished'";
+$result_orders = $conn->query($sql_orders);
+$orders_columns = ['ID', 'Address', 'Status', 'Order Date', 'Total Price'];
+
+if (isset($_GET['action']) && isset($_GET['OID'])) {
+    $action = $_GET['action'];
+    $order_id = $_GET['OID'];
+
+    if ($action === 'dispatch') {
+        $sql_update_order = "UPDATE orders SET status = 'shipped' WHERE OID = $order_id";
+    } elseif ($action === 'cancel') {
+        $sql_update_order = "UPDATE orders SET status = 'canceled' WHERE OID = $order_id";
+    }
+
+    if (isset($sql_update_order)) {
+        if ($conn->query($sql_update_order) === TRUE) {
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit();
+        } else {
+            echo "Error updating order status: " . $conn->error;
+            exit();
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -282,6 +307,47 @@ while ($row = $result->fetch_assoc()) {
             </table>
         </div>
     </div>
+
+    <div class="admin-options">
+        <a href="javascript:void(0)" onclick="toggleTable('orders-table')">Manage Orders</a>
+        <div id="orders-table" class="admin-table" style="display: none;">
+            <table>
+                <tr>
+                    <?php foreach ($orders_columns as $column): ?>
+                        <th><?= $column ?></th>
+                    <?php endforeach; ?>
+                    <th>Actions</th>
+                </tr>
+                <?php
+                $result_orders->data_seek(0);
+                if ($result_orders->num_rows > 0) {
+                    while ($row = $result_orders->fetch_assoc()) {
+                        ?>
+                        <tr>
+                            <?php foreach ($row as $key => $value): ?>
+                                <td><?= $value ?></td>
+                            <?php endforeach; ?>
+                            <td>
+                                <div class='edit'>
+                                    <a href='view_order.php?id=<?= $row["OID"] ?>'>View</a> |
+                                    <a href='?action=dispatch&OID=<?= $row["OID"] ?>'>Dispatch</a> |
+                                    <a href='?action=cancel&OID=<?= $row["OID"] ?>'>Cancel</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="<?= count($orders_columns) + 1 ?>">No orders found</td>
+                    </tr>
+                <?php } ?>
+            </table>
+        </div>
+    </div>
+
+
     <canvas id="averageRatingChart" width="300" height="150"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
