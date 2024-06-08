@@ -48,16 +48,13 @@ if ($result_users->num_rows > 0) {
     $users_columns = array_keys($row);
 }
 
-$sql_products_under_5 = "SELECT p.PID, p.p_name, p.description, p.regular_price, p.current_price, 
-                        p.quantity, p.p_image, c.c_name AS category_name, b.b_name AS brand_name 
-                        FROM products p 
-                        LEFT JOIN categories c ON p.category = c.CRID 
-                        LEFT JOIN brands b ON p.brand = b.BID
-                        WHERE p.quantity <= 5";
+$sql_products_under_5 = "SELECT p.pid, p.p_name, p.description, p.regular_price, p.current_price, 
+                         p.quantity, p.p_image, c.c_name AS category_name, b.b_name AS brand_name 
+                         FROM low_stock_products p 
+                         LEFT JOIN categories c ON p.category_name = c.c_name 
+                         LEFT JOIN brands b ON p.brand_name = b.b_name";
 
 $result_products_under_5 = $conn->query($sql_products_under_5);
-
-$products_under_5_columns = ['ID', 'Name', 'Description', 'Regular price', 'Current price', 'Quantity', 'Image', 'Category', 'Brand'];
 
 $sql = "SELECT p.p_name, AVG(r.rating) AS avg_rating
         FROM products p
@@ -182,32 +179,46 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <div id="products-under-5-table" class="admin-table" style="display: none;">
             <table>
                 <tr>
-                    <?php foreach ($products_under_5_columns as $column): ?>
-                        <th><?php echo $column; ?></th>
-                    <?php endforeach; ?>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Regular Price</th>
+                    <th>Current Price</th>
+                    <th>Quantity</th>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>Brand</th>
                     <th>Actions</th>
                 </tr>
                 <?php
                 if ($result_products_under_5->num_rows > 0) {
                     while ($row = $result_products_under_5->fetch_assoc()) {
-                        echo "<tr>";
-                        foreach ($row as $key => $value) {
-                            if ($key === 'p_image') {
-                                echo "<td><img src='$value' alt='Product Image' style='max-width: 100px; max-height: 100px;'></td>";
-                            } else {
-                                echo "<td>" . $value . "</td>";
-                            }
-                        }
-                        echo "<td >
+                        ?>
+                        <tr>
+                            <td><?= $row["pid"] ?></td>
+                            <td><?= $row["p_name"] ?></td>
+                            <td><?= $row["description"] ?></td>
+                            <td><?= $row["regular_price"] ?></td>
+                            <td><?= $row["current_price"] ?></td>
+                            <td><?= $row["quantity"] ?></td>
+                            <td><img src="<?= $row["p_image"] ?>" alt="Product Image" style="max-width: 100px; max-height: 100px;"></td>
+                            <td><?= $row["category_name"] ?></td>
+                            <td><?= $row["brand_name"] ?></td>
+                            <td>
                                 <div class='edit'>
-                                    <a href='edit_product.php?id=" . $row["PID"] . "'>Edit</a> | 
-                                    <a href='' onclick='deleteProduct(" . $row["PID"] . ")'>Delete</a>
+                                    <a href='edit_product.php?id=<?= $row["PID"] ?>'>Edit</a> |
+                                    <a href='' onclick='deleteProduct(<?= $row["PID"] ?>)'>Delete</a>
                                 </div>
-                            </td>";
-                        echo "</tr>";
+                            </td>
+                        </tr>
+                        <?php
                     }
                 } else {
-                    echo "<tr><td colspan='" . (count($products_under_5_columns) + 1) . "'>No low stock products</td></tr>";
+                    ?>
+                    <tr>
+                        <td colspan="10">No low stock products</td>
+                    </tr>
+                    <?php
                 }
                 ?>
             </table>
