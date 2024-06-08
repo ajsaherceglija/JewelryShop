@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     '{$_POST['f_name']}', '{$_POST['l_name']}', '{$_POST['DOB']}', '{$_POST['phone']}')";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

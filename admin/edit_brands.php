@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "UPDATE brands SET b_name = '$newName', email = '$newEmail', phone = '$newPhone' WHERE BID = '$id'";
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error updating brand: " . $conn->error;

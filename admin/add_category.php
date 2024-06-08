@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO categories (c_name) VALUES ('$category_name')";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

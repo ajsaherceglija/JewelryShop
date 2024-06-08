@@ -218,7 +218,7 @@ FROM products p
          LEFT JOIN brands b ON p.brand = b.BID
 WHERE p.quantity <= 5;
 
-INSERT INTO brands (b_name, phone, email)
+INSERT INTO brands (b_name, email, phone)
 VALUES ('CARTIER', 'cartier@gmail.com', '062 934 638'),
        ('VERSACE', NULL, NULL),
        ('BVLGARI', NULL, NULL),

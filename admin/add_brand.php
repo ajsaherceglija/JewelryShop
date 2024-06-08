@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO brands (b_name, email, phone) VALUES ('$brand_name', '$email', '$phone')";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

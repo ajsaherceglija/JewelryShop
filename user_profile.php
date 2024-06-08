@@ -1,7 +1,6 @@
 <?php
 global $conn;
 require 'includes/header_sessions.php';
-session_start();
 require 'includes/db_connection.php';
 
 $user_id = $_SESSION['user_PID'];
@@ -221,5 +220,6 @@ $addresses = getAddresses($conn, $user_id);
     </div>
 </div>
 </body>
+<script src="includes/header.js"></script>
 <script src="user_profile_script.js"></script>
 </html>

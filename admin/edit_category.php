@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "UPDATE categories SET c_name = '$newName' WHERE CRID = '$id'";
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error updating category: " . $conn->error;

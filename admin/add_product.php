@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 '{$_POST['current_price']}', '{$_POST['quantity']}', '$target_file', '{$_POST['category']}', '{$_POST['brand']}')";
 
                 if ($conn->query($sql) === TRUE) {
-                    header("Location: index.php");
+                    header("Location: admin_page.php");
                     exit();
                 } else {
                     echo "Error: " . $sql . "<br>" . $conn->error;

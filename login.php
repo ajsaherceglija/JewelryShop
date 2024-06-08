@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION['user_PID'] = $PID;
 
             if ($user_type == 'admin') {
-                header("Location: admin/index.php");
+                header("Location: admin/admin_page.php");
                 exit();
             } else {
                 header("Location: home_page.php");

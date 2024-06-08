@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     l_name='{$_POST['l_name']}', DOB='{$_POST['DOB']}', phone='{$_POST['phone']}' WHERE PID='{$_POST['PID']}'";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php");
+        header("Location: admin_page.php");
         exit();
     } else {
         echo "Error updating user: " . $conn->error;
