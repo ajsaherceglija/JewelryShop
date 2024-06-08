@@ -91,7 +91,6 @@ if ($result->num_rows > 0) {
                         <td>
                             <button type="submit" class="update-button">Update Quantity</button>
                         </td>
-                        <td class="total-price" id="total-price" data-total-price="<?php echo $item['total_price']; ?>">$<?php echo $item['total_price']; ?></td>
                     </tr>
                     </tbody>
                 </table>

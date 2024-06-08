@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $orderSuccess = true;
 } else {
-    $sql = "SELECT od.OID, p.p_name, od.price, od.quantity
+    $sql = "SELECT od.OID, p.p_name, od.price, od.quantity, o.total_price
             FROM order_details od
             JOIN products p ON p.PID = od.o_product
             JOIN orders o ON o.OID = od.o_order
@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -128,8 +129,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td>Total price:</td>
+                        <td class="total-price" id="total-price" data-total-price="<?php echo $item['total_price']; ?>">$<?php echo $item['total_price']; ?></td>
+                    </tr>
                 </table>
-            </div>
             <div class="place-order">
                 <button type="submit" class="place-order-button">Place Order</button>
             </div>
