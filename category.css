@@ -37,8 +37,8 @@
 
 .sproduct img {
     width: 100%;
-    height: 200px; /* Set a fixed height for the images */
-    object-fit: cover; /* Ensures the image covers the area without distortion */
+    height: 200px;
+    object-fit: cover;
     border-radius: 10px;
     margin-bottom: 20px;
 }
@@ -110,7 +110,6 @@
     color: white;
 }
 
-
 @media screen and (max-width: 1200px) {
     .product-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -120,6 +119,12 @@
 @media screen and (max-width: 900px) {
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: 1fr;
     }
 }
 
