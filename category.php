@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=yes, initial-scale=4.0, minimum-scale=1.0">
+          content="width=device-width, user-scalable=yes, initial-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Karalic</title>
     <link rel="stylesheet" href="includes/header.css">
@@ -66,7 +66,14 @@
                 echo "<div class='product-name'>" . $row["p_name"] . "</div>";
                 echo "<div class='product-description'>" . $description . "</div>";
                 echo "<div class='product-price'>$" . $row["current_price"] . "</div>";
-                echo "<i class='bx bxs-cart-add cart-icon' onclick=\"addToCart(" . $row['pid'] . ")\"></i>";
+
+
+                echo "<form action='add_to_cart.php' method='post'>";
+                echo "<input type='hidden' name='pid' value='{$row['pid']}'>";
+                echo "<button type='submit'><i class='bx bx-shopping-bag icon'></i></button>";
+                echo "</form>";
+
+
                 echo "</div>";
                 echo "</div>";
             }
