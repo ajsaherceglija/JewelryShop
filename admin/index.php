@@ -98,6 +98,23 @@ if (isset($_GET['action']) && isset($_GET['OID'])) {
         }
     }
 }
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $sql_orders = "SELECT * FROM orders WHERE status = 'shipped'";
+
+    if (isset($_GET['date']) && !empty($_GET['date'])) {
+        $date = $_GET['date'];
+        $sql_orders .= " AND DATE(o_date) = '$date'";
+    }
+
+    if (isset($_GET['from_date']) && isset($_GET['to_date']) && !empty($_GET['from_date']) && !empty($_GET['to_date'])) {
+        $from_date = $_GET['from_date'];
+        $to_date = $_GET['to_date'];
+        $sql_orders .= " AND o_date BETWEEN '$from_date' AND '$to_date'";
+    }
+
+    $result_orders = $conn->query($sql_orders);
+}
 ?>
 
 <!DOCTYPE html>
@@ -343,6 +360,52 @@ if (isset($_GET['action']) && isset($_GET['OID'])) {
                         <td colspan="<?= count($orders_columns) + 1 ?>">No orders found</td>
                     </tr>
                 <?php } ?>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-options">
+        <a href="javascript:void(0)" onclick="toggleTable('daily-table')">Daily Orders</a>
+        <div id="daily-table" class="admin-table" style="display: none;">
+            <form method="get" action="">
+                <label for="date">Enter Date:</label>
+                <input type="date" id="date" name="date">
+                <label for="from_date">From:</label>
+                <input type="date" id="from_date" name="from_date">
+                <label for="to_date">To:</label>
+                <input type="date" id="to_date" name="to_date">
+                <button type="submit">Filter</button>
+            </form>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Order Date</th>
+                    <th>Total Price</th>
+                </tr>
+                <?php
+                $result_orders->data_seek(0);
+                if ($result_orders->num_rows > 0) {
+                    while ($row = $result_orders->fetch_assoc()) {
+                        ?>
+                        <tr>
+                            <td><?= $row["OID"] ?></td>
+                            <td><?= $row["o_address"] ?></td>
+                            <td><?= $row["status"] ?></td>
+                            <td><?= $row["o_date"] ?></td>
+                            <td><?= $row["total_price"] ?></td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="6">No orders found</td>
+                    </tr>
+                    <?php
+                }
+                ?>
             </table>
         </div>
     </div>
