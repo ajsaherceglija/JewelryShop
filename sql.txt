@@ -9,7 +9,7 @@ create table if not exists brands
 
 create table if not exists categories
 (
-    CRID    int auto_increment
+    CRID   int auto_increment
         primary key,
     c_name varchar(200) not null
 );
@@ -36,10 +36,10 @@ create table if not exists addresses
 (
     AID         int auto_increment
         primary key,
-    country     varchar(50)  not null,
-    city        varchar(50)  not null,
-    postal_code varchar(20)  not null,
-    a_address   varchar(100) not null,
+    country     varchar(50)  null,
+    city        varchar(50)  null,
+    postal_code varchar(20)  null,
+    a_address   varchar(100) null,
     people      int          not null,
     constraint addresses_ibfk_1
         foreign key (people) references people (PID)
@@ -50,11 +50,12 @@ create index people
 
 create table if not exists orders
 (
-    OID       int auto_increment
+    OID         int auto_increment
         primary key,
-    o_address int         not null,
-    status    varchar(50) null,
-    o_date    date        not null,
+    o_address   int                         not null,
+    status      varchar(50)                 null,
+    o_date      date                        not null,
+    total_price decimal(10, 2) default 0.00 null,
     constraint orders_ibfk_1
         foreign key (o_address) references addresses (AID)
 );
@@ -64,16 +65,17 @@ create index o_address
 
 create table if not exists products
 (
-    PID           int auto_increment
+    pid           int auto_increment
         primary key,
-    category      int            not null,
-    brand         int            not null,
-    image         varchar(200)   null,
-    p_name        varchar(200)   not null,
-    p_description varchar(500)   null,
-    regular_price decimal(10, 2) null,
-    current_price decimal(10, 2) null,
-    quantity      int            not null,
+    category      int                        not null,
+    brand         int                        not null,
+    p_image       varchar(200)               null,
+    p_name        varchar(200)               not null,
+    description   varchar(500)               null,
+    regular_price decimal(10, 2)             null,
+    current_price decimal(10, 2)             null,
+    quantity      int                        not null,
+    avg_rating    decimal(3, 2) default 0.00 null,
     constraint products_ibfk_1
         foreign key (category) references categories (CRID),
     constraint products_ibfk_2
@@ -91,7 +93,7 @@ create table if not exists order_details
     constraint order_details_ibfk_1
         foreign key (o_order) references orders (OID),
     constraint order_details_ibfk_2
-        foreign key (o_product) references products (PID)
+        foreign key (o_product) references products (pid)
 );
 
 create index o_order
@@ -99,6 +101,48 @@ create index o_order
 
 create index o_product
     on order_details (o_product);
+
+create definer = root@`%` trigger update_total_price_after_delete
+    after delete
+    on order_details
+    for each row
+BEGIN
+    UPDATE orders
+    SET total_price = (
+        SELECT IFNULL(SUM(price * quantity), 0)
+        FROM order_details
+        WHERE o_order = OLD.o_order
+    )
+    WHERE OID = OLD.o_order;
+END;
+
+create definer = root@`%` trigger update_total_price_after_insert
+    after insert
+    on order_details
+    for each row
+BEGIN
+    UPDATE orders
+    SET total_price = (
+        SELECT IFNULL(SUM(price * quantity), 0)
+        FROM order_details
+        WHERE o_order = NEW.o_order
+    )
+    WHERE OID = NEW.o_order;
+END;
+
+create definer = root@`%` trigger update_total_price_after_update
+    after update
+    on order_details
+    for each row
+BEGIN
+    UPDATE orders
+    SET total_price = (
+        SELECT IFNULL(SUM(price * quantity), 0)
+        FROM order_details
+        WHERE o_order = NEW.o_order
+    )
+    WHERE OID = NEW.o_order;
+END;
 
 create index brand
     on products (brand);
@@ -111,47 +155,25 @@ create table if not exists reviews
     RID         int auto_increment
         primary key,
     rating      int          not null,
-    r_comment   varchar(500) null,
+    comment     varchar(500) null,
     r_date      date         not null,
     valid_until date         null,
     people      int          not null,
-    product   int          not null,
+    product     int          not null,
     constraint reviews_ibfk_1
         foreign key (people) references people (PID),
     constraint reviews_ibfk_2
-        foreign key (product) references products (PID),
+        foreign key (product) references products (pid),
     check ((`rating` >= 1) and (`rating` <= 5))
 );
 
 create index people
     on reviews (people);
 
-create index product
+create index r_product
     on reviews (product);
 
-create table if not exists wishlists
-(
-    WID         int auto_increment
-        primary key,
-    date_added  date         not null,
-    valid_until date         null,
-    w_comment   varchar(200) null,
-    w_product   int          not null,
-    people      int          not null,
-    constraint wishlists_ibfk_1
-        foreign key (people) references people (PID),
-    constraint wishlists_ibfk_2
-        foreign key (w_product) references products (PID)
-);
-
-create index people
-    on wishlists (people);
-
-create index w_product
-    on wishlists (w_product);
-
-
-create definer = root@localhost trigger update_avg_rating
+create definer = root@`%` trigger update_avg_rating
     after insert
     on reviews
     for each row
@@ -166,3 +188,57 @@ BEGIN
     SET avg_rating = avg_rating
     WHERE pid = NEW.product;
 END;
+
+create table if not exists wishlists
+(
+    WID         int auto_increment
+        primary key,
+    date_added  date         not null,
+    valid_until date         null,
+    w_comment   varchar(200) null,
+    w_product   int          not null,
+    people      int          not null,
+    constraint wishlists_ibfk_1
+        foreign key (people) references people (PID),
+    constraint wishlists_ibfk_2
+        foreign key (w_product) references products (pid)
+);
+
+create index people
+    on wishlists (people);
+
+create index w_product
+    on wishlists (w_product);
+
+INSERT INTO brands (b_name, phone, email)
+VALUES ('CARTIER', 'cartier@gmail.com', '062 934 638'),
+       ('VERSACE', NULL, NULL),
+       ('BVLGARI', NULL, NULL),
+       ('TIFFANY', NULL, NULL),
+       ('PANDORA', 'pandora@test', NULL)
+;
+INSERT INTO categories (c_name)
+VALUES ('RINGS'), ('EARRINGS'), ('NECKLACES'), ('BRACELETS')
+;
+INSERT INTO products (category, brand, p_image, p_name, description, regular_price, current_price, quantity)
+VALUES ('1', '1', '../images/ring1.png', 'Diamond Ring', 'gold', '300.00', '300.00', '5'),
+       ('1', '2', '../images/ring2.jpg', 'Silver Ring', 'silver', '80.00', '80.00', '8'),
+       ('1', '3', '../images/ring3.jpg', 'Engagement Ring', 'silver', '200.00', '220.00', '3'),
+       ('1', '4', '../images/ring4.jpg', 'Intertwining Leaves Ring', 'rose gold', '250.00', '250.00', '10'),
+       ('1', '5', '../images/ring5.jpg', 'Diamond Idyllic Ring', 'gold', '177.20', '177.20', '2'),
+       ('2', '1', '../images/earring1.jpg', 'Gold Hoop Earrings', '14k gold', '189.90', '189.90', '9'),
+       ('2', '2', '../images/earring2.jpg', 'Silver Earrings', 'silver', '68.00', '68.00', '4'),
+       ('2', '3', '../images/earring3.jpg', 'Round Diamond Earrings', '18k white gold', '250.00', '250.00', '3'),
+       ('2', '4', '../images/earring4.jpg', 'Pearl Earrings', 'silver', '102.00', '82.00', '1'),
+       ('2', '5', '../images/earring5.jpg', 'Eucalyptus Leaf Earrings', '24k gold', '800.00', '800.00', '3'),
+       ('3', '1', '../images/necklace1.jpg', 'Golden Necklace', 'gold', '350.00', '350.00', '12'),
+       ('3', '2', '../images/necklace2.jpg', 'Heart Necklace', 'gold', '500.00', '500.00', '4'),
+       ('3', '3', '../images/necklace3.jpg', 'Diamond Necklace', 'silver', '467.00', '467.00', '8'),
+       ('3', '4', '../images/necklace4.jpg', 'Pearl Necklace', 'gold', '200.00', '200.00', '6'),
+       ('3', '5', '../images/necklace5.jpg', 'Maldives Gold Necklace', 'gold', '500.00', '500.00', '7'),
+       ('4', '1', '../images/bracelet1.jpg', 'Juste un Clou Bracelet', '18k yellow gold', '5000.00', '5000.00', '10'),
+       ('4', '2', '../images/bracelet2.jpg', 'Diamond Bracelet', 'silver', '1000.00', '1000.00', '2'),
+       ('4', '3', '../images/bracelet3.jpg', 'Heart Bracelet', 'gold', '235.00', '235.00', '15'),
+       ('4', '4', '../images/bracelet4.jpg', 'Personalized Bracelet', 'silver', '60.00', '60.00', '8'),
+       ('4', '5', '../images/bracelet5.jpg', 'Chain Bracelet', 'gold', '500.00', '500.00', '5')
+;
