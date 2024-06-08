@@ -175,7 +175,7 @@ if (isset($_GET['action']) && isset($_GET['OID'])) {
                     while ($row = $result_products_under_5->fetch_assoc()) {
                         echo "<tr>";
                         foreach ($row as $key => $value) {
-                            if ($key === 'image') {
+                            if ($key === 'p_image') {
                                 echo "<td><img src='$value' alt='Product Image' style='max-width: 100px; max-height: 100px;'></td>";
                             } else {
                                 echo "<td>" . $value . "</td>";

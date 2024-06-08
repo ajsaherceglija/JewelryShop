@@ -25,7 +25,7 @@
 <div class="header-image">
     <h1>PORODICA KARALIĆ</h1>
 </div>
-<h2 class="popular-picks">Most popular picks</h2>
+<h2 class="popular-picks">Gallery</h2>
 <div class="container">
     <div class="slider">
         <button id="prev-slide" class="slide-button material-symbols-rounded">
