@@ -67,14 +67,20 @@ if ($result->num_rows > 0) {
                     </thead>
                     <tbody>
                     <?php foreach ($bagItems as $item): ?>
-                        <tr class="shopping-bag-item" data-oid="<?php echo $item['OID']; ?>">
+                        <tr class="bag-item" data-oid="<?php echo $item['OID']; ?>">
                             <td class="item-image"><img src="images/<?php echo $item['p_image']; ?>" alt="<?php echo $item['p_name']; ?>"></td>
-                            <td><?php echo $item['p_name']; ?></td>
-                            <td><?php echo date('Y-m-d', strtotime($item['o_date'])); ?></td>
-                            <td>
+                            <td class="item-info">
+                                <p><?php echo $item['p_name']; ?></p>
+                            </td>
+                            <td class="item-info">
+                                <p><?php echo date('Y-m-d', strtotime($item['o_date'])); ?></p>
+                            </td>
+                            <td class="item-info">
                                 <input type="number" name="quantity" data-oid="<?php echo $item['OID']; ?>" data-price="<?php echo $item['current_price']; ?>" value="<?php echo $item['quantity']; ?>" min="1">
                             </td>
-                            <td class="item-total" data-price="<?php echo $item['current_price']; ?>">$<?php echo number_format($item['total_item_price'], 2); ?></td>
+                            <td class="item-info">
+                                <p class="item-total" id="total-item-price">$<?php echo number_format($item['total_item_price'], 2); ?></p>
+                            </td>
                             <td class="actions">
                                 <button type="button" class="remove" onclick="removeFromBag(<?php echo $item['OID']; ?>)">X</button>
                             </td>
@@ -85,8 +91,7 @@ if ($result->num_rows > 0) {
                         <td>
                             <button type="submit" class="update-button">Update Quantity</button>
                         </td>
-                        <td class="total-price" id="total-price">$<?php echo $item['total_price']; ?></td>
-                        <td colspan="2"></td>
+                        <td class="total-price" id="total-price" data-total-price="<?php echo $item['total_price']; ?>">$<?php echo $item['total_price']; ?></td>
                     </tr>
                     </tbody>
                 </table>

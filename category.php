@@ -1,4 +1,6 @@
 <?php require 'includes/header_sessions.php'; ?>
+<?php require 'includes/db_connection.php'; ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -41,6 +43,7 @@
     $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $offset = ($current_page - 1) * $products_per_page;
 
+
     if (isset($_GET['CRID'])) {
         $category_id = $_GET['CRID'];
         $sql_count = "SELECT COUNT(*) as total FROM products WHERE category = $category_id";
@@ -55,15 +58,15 @@
             echo "<div class='results_number'>$total_products results</div>";
             echo "<div class='product-grid'>";
             while ($row = $result->fetch_assoc()) {
-                echo "<div class='sproduct' onclick='openProductPage({$row["PID"]})'>";
+                echo "<div class='sproduct' onclick='openProductPage({$row["pid"]})'>";
                 $image = isset($row["image"]) ? $row["image"] : '';
-                $description = isset($row["p_description"]) ? $row["p_description"] : '';
-                echo "<img src='images/{$row["image"]}' alt='{$row["p_name"]}'>";
+                $description = isset($row["description"]) ? $row["description"] : '';
+                echo "<img src='images/{$row["p_image"]}' alt='{$row["p_name"]}'>";
                 echo "<div class='product-details'>";
                 echo "<div class='product-name'>" . $row["p_name"] . "</div>";
                 echo "<div class='product-description'>" . $description . "</div>";
                 echo "<div class='product-price'>$" . $row["current_price"] . "</div>";
-                echo "<i class='bx bxs-cart-add cart-icon' onclick=\"addToCart(" . $row['PID'] . ")\"></i>";
+                echo "<i class='bx bxs-cart-add cart-icon' onclick=\"addToCart(" . $row['pid'] . ")\"></i>";
                 echo "</div>";
                 echo "</div>";
             }
@@ -103,6 +106,3 @@
 <script src="includes/header.js"></script>
 </body>
 </html>
-
-
-

@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $checkResult = $conn->query($checkQuery);
 
         if ($checkResult && $checkResult->num_rows > 0) {
-            header("Location: shopping_bag.php?added_to_cart=false");
+            header("Location: shopping_bag.php");
             exit();
         }
 
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $oid,
                         $product_id)";
         if ($conn->query($sql) === TRUE) {
-            header("Location: shopping_bag.php?added_to_cart=true");
+            header("Location: shopping_bag.php");
             exit();
         } else {
             echo 'Error: ' . $conn->error;

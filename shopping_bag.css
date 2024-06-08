@@ -25,17 +25,13 @@ body {
     width: 100%;
     border-collapse: collapse;
 }
-#bag-box th,
-#bag-box td {
+#bag-box th, #bag-box td {
     padding: 10px;
     text-align: center;
 }
 .bag-item {
     width: 100%;
     border-bottom: 1px solid #ddd;
-}
-.bag-item:last-child {
-    border-bottom: none;
 }
 .item-image img {
     width: 100px;
@@ -84,7 +80,7 @@ input[type="number"] {
 .update-button:hover, .checkout-button:hover, .actions button:hover{
     opacity: 70%;
 }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1200px) {
     .shopping-bag-container {
         width: 95%;
     }
@@ -93,13 +89,25 @@ input[type="number"] {
         height: 80px;
     }
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
+    thead {
+        display: none;
+    }
     .item-image img {
-        width: 60px;
-        height: 60px;
+        width: 100px;
+        height: 100px;
+    }
+    .item-info, .actions {
+        display: flex;
+    }
+    td[colspan] {
+        display: none;
     }
     .actions button {
         padding: 3px 5px;
         font-size: 0.8em;
+    }
+    .total-price {
+        text-align: left !important;
     }
 }

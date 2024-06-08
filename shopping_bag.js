@@ -1,55 +1,64 @@
-document.getElementById('update-bag-form').addEventListener('change', function(event) {
-    const target = event.target;
-    if (target && target.matches('input[name="quantity"]')) {
-        const oid = target.dataset.oid;
-        const quantity = target.value;
-        updateQuantity(oid, quantity);
-    }
+document.getElementById('update-bag-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const quantities = {};
+
+    document.querySelectorAll('input[name="quantity"]').forEach(input => {
+        const oid = input.dataset.oid;
+        const quantity = input.value.trim();
+        quantities[oid] = quantity;
+    });
+    updateQuantity(quantities);
 });
 
-function updateTotalPrice() {
-    let totalPrice = 0;
-    document.querySelectorAll('.item-total').forEach(itemTotal => {
-        const price = parseFloat(itemTotal.dataset.price);
-        const quantityInput = itemTotal.parentNode.querySelector('input[name="quantity"]');
-        if (quantityInput && quantityInput.value.trim() !== '') {
-            const quantity = parseInt(quantityInput.value);
-            const total = quantity * price;
-            itemTotal.innerText = `$${total.toFixed(2)}`;
-            totalPrice += total;
-        }
-    });
-    document.getElementById('total-price').innerText = `$${totalPrice.toFixed(2)}`;
-}
-
-function updateQuantity(oid, quantity) {
-    var xhr = new XMLHttpRequest();
+function updateQuantity(quantities) {
+    const formData = new FormData();
+    for (const oid in quantities) {
+        formData.append('oid[]', oid);
+        formData.append('quantity[]', quantities[oid]);
+    }
+    const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.readyState === 4) {
             if (xhr.status === 200) {
-                console.log('Quantity updated successfully.');
-                updateTotalPrice();
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        response.items.forEach(item => {
+                            const row = document.querySelector(`tr[data-oid="${item.oid}"]`);
+                            if (row) {
+                                row.querySelector('.item-total').textContent = `$${item.total_item_price.toFixed(2)}`;
+                            }
+                        });
+                        alert('Quantities updated successfully.');
+                    } else {
+                        alert('Failed to update quantities: ' + response.error);
+                    }
+                } catch (e) {
+                    alert('Failed to update quantities: Invalid server response.');
+                }
             } else {
-                console.error('Error updating quantity: ' + xhr.responseText);
+                alert('Error updating quantity: ' + xhr.statusText);
             }
         }
     };
     xhr.open('POST', 'update_cart.php');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send('oid=' + oid + '&quantity=' + quantity);
+    xhr.send(formData);
 }
+
+
 function removeFromBag(oid) {
-    // Confirm removal
     if (confirm('Are you sure you want to remove this item?')) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var row = document.querySelector('.shopping-bag-item[data-oid="' + oid + '"]');
-                    row.parentNode.removeChild(row);
-                    updateTotalPrice();
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                if (xhr.responseText.trim() === 'Success') {
+                    const row = document.querySelector(`tr[data-oid="${oid}"]`);
+                    if (row) {
+                        row.remove();
+                        alert('Item removed from shopping bag successfully.');
+                    }
                 } else {
-                    // Handle error
                     console.error('Error removing item: ' + xhr.responseText);
                 }
             }
