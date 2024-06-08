@@ -205,8 +205,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             <td><?= $row["brand_name"] ?></td>
                             <td>
                                 <div class='edit'>
-                                    <a href='edit_product.php?id=<?= $row["PID"] ?>'>Edit</a> |
-                                    <a href='' onclick='deleteProduct(<?= $row["PID"] ?>)'>Delete</a>
+                                    <a href='edit_product.php?id=<?= $row["pid"] ?>'>Edit</a> |
+                                    <a href='' onclick='deleteProduct(<?= $row["pid"] ?>)'>Delete</a>
                                 </div>
                             </td>
                         </tr>
