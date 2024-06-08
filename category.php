@@ -79,7 +79,6 @@
             }
             echo "</div>";
 
-            // Pagination
             if ($total_pages > 1) {
                 echo "<div class='pagination'>";
                 if ($current_page > 1) {
