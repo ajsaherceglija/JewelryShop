@@ -9,9 +9,11 @@ $avg_rating = 0.0;
 
 function getProductDetails($product_id) {
     global $conn;
-    $sql = "SELECT p_name, current_price, description, brand, p_image, quantity,
+    $sql = "SELECT p.p_name, p.current_price, p.description, b.b_name AS brand, p.p_image, p.quantity,
                (SELECT AVG(rating) FROM reviews WHERE product = $product_id) as avg_rating 
-               FROM products WHERE pid = $product_id";
+               FROM products p
+               JOIN brands b ON p.brand = b.BID
+               WHERE p.pid = $product_id";
     $result = $conn->query($sql);
 
     if ($result && $row = $result->fetch_assoc()) {
@@ -19,6 +21,7 @@ function getProductDetails($product_id) {
     }
     return null;
 }
+
 
 if (isset($_GET['wishlist'])) {
     if ($_GET['wishlist'] == 'added') {
