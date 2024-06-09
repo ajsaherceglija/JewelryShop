@@ -250,3 +250,66 @@ VALUES ('1', '1', '../images/ring1.png', 'Diamond Ring', 'gold', '300.00', '300.
        ('4', '4', '../images/bracelet4.jpg', 'Personalized Bracelet', 'silver', '60.00', '60.00', '8'),
        ('4', '5', '../images/bracelet5.jpg', 'Chain Bracelet', 'gold', '500.00', '500.00', '5')
 ;
+create or replace definer = root@`%` view low_stock_products as
+select `p`.`pid`           AS `pid`,
+       `p`.`p_name`        AS `p_name`,
+       `p`.`description`   AS `description`,
+       `p`.`regular_price` AS `regular_price`,
+       `p`.`current_price` AS `current_price`,
+       `p`.`quantity`      AS `quantity`,
+       `p`.`p_image`       AS `p_image`,
+       `c`.`c_name`        AS `category_name`,
+       `b`.`b_name`        AS `brand_name`
+from ((`jewelry_store`.`products` `p` left join `jewelry_store`.`categories` `c`
+       on ((`p`.`category` = `c`.`CRID`))) left join `jewelry_store`.`brands` `b` on ((`p`.`brand` = `b`.`BID`)))
+where (`p`.`quantity` <= 5);
+
+create
+    definer = root@`%` procedure add_new_product(IN p_category int, IN p_brand int, IN p_image varchar(200),
+                                                 IN p_name varchar(200), IN p_description varchar(500),
+                                                 IN p_regular_price decimal(10, 2), IN p_current_price decimal(10, 2),
+                                                 IN p_quantity int)
+BEGIN
+    INSERT INTO products (category, brand, p_image, p_name, description, regular_price, current_price, quantity)
+    VALUES (p_category, p_brand, p_image, p_name, p_description, p_regular_price, p_current_price, p_quantity);
+END;
+
+create
+    definer = root@`%` function calculate_discounted_price(product_id int, discount_percentage decimal(5, 2)) returns decimal(10, 2)
+BEGIN
+    DECLARE discounted_price DECIMAL(10, 2);
+    SELECT regular_price * (1 - discount_percentage / 100) INTO discounted_price
+    FROM products
+    WHERE pid = product_id;
+    RETURN discounted_price;
+END;
+
+create
+    definer = root@`%` function get_average_rating(product_id int) returns decimal(3, 2)
+BEGIN
+    DECLARE avg_rating DECIMAL(3, 2);
+    SELECT AVG(rating) INTO avg_rating
+    FROM reviews
+    WHERE product = product_id;
+    RETURN avg_rating;
+END;
+
+create
+    definer = root@`%` procedure update_product_quantity(IN p_id int, IN new_quantity int)
+BEGIN
+    UPDATE products
+    SET quantity = new_quantity
+    WHERE pid = p_id;
+END;
+
+create index idx_review_rating
+    on reviews (rating);
+
+create index idx_product_name
+    on products (p_name);
+
+create index idx_people_email
+    on people (email);
+
+create index idx_order_status
+    on orders (status);
