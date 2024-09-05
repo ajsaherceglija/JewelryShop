@@ -58,7 +58,6 @@ $result_products_under_5 = $conn->query($sql_products_under_5);
 
 $sql = "SELECT p.pid, p.p_name, p.avg_rating
         FROM products p
-        LEFT JOIN reviews r ON p.PID = r.product
         WHERE avg_rating > 0.0";
 $result = $conn->query($sql);
 
@@ -139,43 +138,45 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="admin-options">
                 <a href="add_product.php">Add Product</a>
             </div>
-            <table>
-                <tr>
-                    <?php foreach ($products_columns as $column): ?>
-                        <th><?php echo $column; ?></th>
-                    <?php endforeach; ?>
-                    <th>Actions</th>
-                </tr>
-                <?php
-                $result_products->data_seek(0);
-                if ($result_products->num_rows > 0) {
-                    while ($row = $result_products->fetch_assoc()) {
-                        echo "<tr>";
-                        foreach ($row as $key => $value) {
-                            if ($key === 'p_image') {
-                                echo "<td><img src='$value' alt='Product Image' style='max-width: 100px; max-height: 100px;'></td>";
-                            }else {
-                                echo "<td>" . $value . "</td>";
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <?php foreach ($products_columns as $column): ?>
+                            <th><?php echo $column; ?></th>
+                        <?php endforeach; ?>
+                        <th>Actions</th>
+                    </tr>
+                    <?php
+                    $result_products->data_seek(0);
+                    if ($result_products->num_rows > 0) {
+                        while ($row = $result_products->fetch_assoc()) {
+                            echo "<tr>";
+                            foreach ($row as $key => $value) {
+                                if ($key === 'p_image') {
+                                    echo "<td><img src='$value' alt='Product Image' style='max-width: 100px; max-height: 100px;'></td>";
+                                }else {
+                                    echo "<td>" . $value . "</td>";
+                                }
                             }
-                        }
-                        echo "<td >
+                            echo "<td >
                                 <div class='edit'>
                                     <a href='edit_product.php?id=" . $row["pid"] . "'>Edit</a> | 
                                     <a href='' onclick='deleteProduct(" . $row["pid"] . ")'>Delete</a>
                                 </div>
                             </td>";
-                        echo "</tr>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='" . (count($products_columns) + 1) . "'>No products found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='" . (count($products_columns) + 1) . "'>No products found</td></tr>";
-                }
-                ?>
-            </table>
+                    ?>
+                </table>
+            </div>
         </div>
     </div>
     <div class="admin-options">
         <a href="javascript:void(0)" onclick="toggleTable('products-under-5-table')">Low Stock Products</a>
-        <div id="products-under-5-table" class="admin-table" style="display: none;">
+        <div id="products-under-5-table" class="table-wrapper" style="display: none;">
             <table>
                 <tr>
                     <th>ID</th>
@@ -229,34 +230,36 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="admin-options">
                 <a href="add_category.php">Add Category</a>
             </div>
-            <table>
-                <tr>
-                    <?php foreach ($categories_columns as $column): ?>
-                        <th><?php echo $column; ?></th>
-                    <?php endforeach; ?>
-                    <th>Actions</th>
-                </tr>
-                <?php
-                $result_categories->data_seek(0);
-                if ($result_categories->num_rows > 0) {
-                    while ($row = $result_categories->fetch_assoc()) {
-                        echo "<tr>";
-                        foreach ($row as $value) {
-                            echo "<td>" . $value . "</td>";
-                        }
-                        echo "<td >
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <?php foreach ($categories_columns as $column): ?>
+                            <th><?php echo $column; ?></th>
+                        <?php endforeach; ?>
+                        <th>Actions</th>
+                    </tr>
+                    <?php
+                    $result_categories->data_seek(0);
+                    if ($result_categories->num_rows > 0) {
+                        while ($row = $result_categories->fetch_assoc()) {
+                            echo "<tr>";
+                            foreach ($row as $value) {
+                                echo "<td>" . $value . "</td>";
+                            }
+                            echo "<td >
                                 <div class='edit'>
                                     <a href='edit_category.php?id=" . $row["CRID"] . "'>Edit</a> | 
                                     <a href='' onclick='deleteCategory(" . $row["CRID"] . ")'>Delete</a>
                                 </div>
                             </td>";
-                        echo "</tr>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='" . (count($categories_columns) + 1) . "'>No categories found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='" . (count($categories_columns) + 1) . "'>No categories found</td></tr>";
-                }
-                ?>
-            </table>
+                    ?>
+                </table>
+            </div>
         </div>
     </div>
     <div class="admin-options">
@@ -265,34 +268,36 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="admin-options">
                 <a href="add_brand.php">Add Brand</a>
             </div>
-            <table>
-                <tr>
-                    <?php foreach ($brands_columns as $column): ?>
-                        <th><?php echo $column; ?></th>
-                    <?php endforeach; ?>
-                    <th>Actions</th>
-                </tr>
-                <?php
-                $result_brands->data_seek(0);
-                if ($result_brands->num_rows > 0) {
-                    while ($row = $result_brands->fetch_assoc()) {
-                        echo "<tr>";
-                        foreach ($row as $value) {
-                            echo "<td>" . $value . "</td>";
-                        }
-                        echo "<td >
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <?php foreach ($brands_columns as $column): ?>
+                            <th><?php echo $column; ?></th>
+                        <?php endforeach; ?>
+                        <th>Actions</th>
+                    </tr>
+                    <?php
+                    $result_brands->data_seek(0);
+                    if ($result_brands->num_rows > 0) {
+                        while ($row = $result_brands->fetch_assoc()) {
+                            echo "<tr>";
+                            foreach ($row as $value) {
+                                echo "<td>" . $value . "</td>";
+                            }
+                            echo "<td >
                                 <div class='edit'>
                                     <a href='edit_brands.php?id=" . $row["BID"] . "'>Edit</a> | 
                                     <a href='' onclick='deleteBrand(" . $row["BID"] . ")'>Delete</a>
                                 </div>
                             </td>";
-                        echo "</tr>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='" . (count($brands_columns) + 1) . "'>No brands found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='" . (count($brands_columns) + 1) . "'>No brands found</td></tr>";
-                }
-                ?>
-            </table>
+                    ?>
+                </table>
+            </div>
         </div>
     </div>
     <div class="admin-options">
@@ -301,43 +306,45 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="admin-options">
                 <a href="add_user.php">Add User</a>
             </div>
-            <table>
-                <tr>
-                    <?php foreach ($users_columns as $column): ?>
-                        <?php if ($column !== 'p_password'): ?>
-                            <th><?php echo $column; ?></th>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                    <th>Actions</th>
-                </tr>
-                <?php
-                $result_users->data_seek(0);
-                if ($result_users->num_rows > 0) {
-                    while ($row = $result_users->fetch_assoc()) {
-                        echo "<tr>";
-                        foreach ($row as $key => $value) {
-                            if ($key !== 'p_password') {
-                                echo "<td>" . $value . "</td>";
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <?php foreach ($users_columns as $column): ?>
+                            <?php if ($column !== 'p_password'): ?>
+                                <th><?php echo $column; ?></th>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <th>Actions</th>
+                    </tr>
+                    <?php
+                    $result_users->data_seek(0);
+                    if ($result_users->num_rows > 0) {
+                        while ($row = $result_users->fetch_assoc()) {
+                            echo "<tr>";
+                            foreach ($row as $key => $value) {
+                                if ($key !== 'p_password') {
+                                    echo "<td>" . $value . "</td>";
+                                }
                             }
-                        }
-                        echo "<td>
+                            echo "<td>
                 <div class='edit'>
                     <a href='edit_user.php?id=" . $row["PID"] . "'>Edit</a>
                 </div>
             </td>";
-                        echo "</tr>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='" . (count($users_columns) + 1) . "'>No users found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='" . (count($users_columns) + 1) . "'>No users found</td></tr>";
-                }
-            ?>
-            </table>
+                    ?>
+                </table>
+            </div>
         </div>
     </div>
 
     <div class="admin-options">
         <a href="javascript:void(0)" onclick="toggleTable('orders-table')">Manage Orders</a>
-        <div id="orders-table" class="admin-table" style="display: none;">
+        <div id="orders-table" class="table-wrapper" style="display: none;">
             <table>
                 <tr>
                     <?php foreach ($orders_columns as $column): ?>

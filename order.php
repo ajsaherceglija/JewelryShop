@@ -10,6 +10,18 @@ if (!isset($_SESSION['user_PID'])) {
 
 $personId = $_SESSION['user_PID'];
 
+$sql = "SELECT p.f_name, p.l_name, a.a_address, a.city, a.country, a.postal_code
+        FROM people p, addresses a
+        WHERE p.PID = a.people AND p.PID = $personId
+        ORDER BY a.AID DESC 
+        LIMIT 1";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $details = $result->fetch_assoc();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = $conn->real_escape_string(trim($_POST['first_name']));
     $lastName = $conn->real_escape_string(trim($_POST['last_name']));
@@ -32,22 +44,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $sql = "INSERT INTO addresses (country, city, a_address, postal_code, people) 
-            VALUES ('$country', '$city', '$address', '$postalCode', '$personId')";
-    if (!$conn->query($sql)) {
-        echo "Error: " . $conn->error;
-        exit();
+    $sql = "SELECT a.AID
+            FROM people p, addresses a
+            WHERE a.people = $personId
+            AND a.country = '$country'
+            AND a.city = '$city'
+            AND a.postal_code = '$postalCode'
+            AND a.a_address = '$address'
+            ORDER BY a.AID DESC";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 0) {
+        $sql = "INSERT INTO addresses (country, city, a_address, postal_code, people) 
+                VALUES ('$country', '$city', '$address', '$postalCode', '$personId')";
+
+        if (!$conn->query($sql)) {
+            echo "Error: " . $conn->error;
+            exit();
+        }
+        $addressId = $conn->insert_id;
+    } else {
+        $row = $result->fetch_assoc();
+        $addressId = $row['AID'];
     }
 
-    $addressId = $conn->insert_id;
+    $sql = "SELECT od.o_product, od.quantity
+            FROM order_details od, orders o
+            WHERE o.OID = od.o_order
+            AND o.status = 'processing'
+            AND o.o_address IN (SELECT AID FROM addresses WHERE people = '$personId')";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $productId = $row['o_product'];
+            $quantityOrdered = $row['quantity'];
+
+            $sql = "UPDATE products 
+                    SET quantity = quantity - $quantityOrdered 
+                    WHERE pid = $productId";
+
+            if (!$conn->query($sql)) {
+                echo "Error: " . $conn->error;
+                exit();
+            }
+        }
+    }
 
     $sql = "UPDATE orders 
             SET o_address = '$addressId', status = 'finished', o_date = NOW() 
             WHERE o_address IN (SELECT AID FROM addresses WHERE people = '$personId') AND status = 'processing'";
+
     if (!$conn->query($sql)) {
         echo "Error: " . $conn->error;
         exit();
     }
+
     $orderSuccess = true;
 } else {
     $sql = "SELECT od.OID, p.p_name, od.price, od.quantity, o.total_price
@@ -96,17 +148,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="shipping-details">
                 <h3>Shipping Details</h3>
                 <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="first_name" required><br>
+                <input type="text" id="first_name" name="first_name" value="<?php echo isset($details['f_name']) ? $details['f_name'] : ''; ?>" required><br>
                 <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name" required><br>
+                <input type="text" id="last_name" name="last_name" value="<?php echo $details['l_name'] ?? ''; ?>" required><br>
                 <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required><br>
+                <input type="text" id="address" name="address" value="<?php echo $details['a_address'] ?? ''; ?>" required><br>
                 <label for="city">City:</label>
-                <input type="text" id="city" name="city" required><br>
+                <input type="text" id="city" name="city" value="<?php echo $details['city'] ?? ''; ?>" required><br>
                 <label for="country">Country:</label>
-                <input type="text" id="country" name="country" required><br>
+                <input type="text" id="country" name="country" value="<?php echo $details['country'] ?? ''; ?>" required><br>
                 <label for="postal_code">ZIP/Postal Code:</label>
-                <input type="text" id="postal_code" name="postal_code" required><br>
+                <input type="text" id="postal_code" name="postal_code" value="<?php echo $details['postal_code'] ?? ''; ?>" required><br>
             </div>
             <div class="order-summary">
                 <h3>Order Summary</h3>
@@ -131,8 +183,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </tbody>
                     <tr>
                         <td colspan="2"></td>
-                        <td>Total price:</td>
-                        <td class="total-price" id="total-price" data-total-price="<?php echo $item['total_price']; ?>">$<?php echo $item['total_price']; ?></td>
+                        <td style="text-align: center" colspan="2" class="total-price" id="total-price"
+                            data-total-price="<?php echo $item['total_price']; ?>">
+                            Total price: $<?php echo $item['total_price']; ?>
+                        </td>
                     </tr>
                 </table>
             <div class="place-order">

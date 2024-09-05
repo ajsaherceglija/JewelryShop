@@ -19,24 +19,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['oid'])) {
             for ($i = 0; $i < count($oids); $i++) {
                 $oid = $oids[$i];
                 $quantity = $quantities[$i];
-                $sql = "UPDATE order_details SET quantity = $quantity WHERE OID = $oid";
 
-                if ($conn->query($sql) === TRUE) {
-                    $sql = "SELECT p.current_price, od.quantity
+                $sql = "SELECT p.quantity as available_quantity, p.current_price, p.p_name, od.quantity as previous_quantity
                         FROM order_details od
                         JOIN products p ON p.pid = od.o_product
                         WHERE od.OID = $oid";
-                    $result = $conn->query($sql);
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $totalItemPrice = $row['current_price'] * $row['quantity'];
-                        $updatedItems[] = [
-                            'oid' => $oid,
-                            'total_item_price' => $totalItemPrice
-                        ];
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+
+                    if ($quantity > $row['available_quantity']) {
+                        $name = $row['p_name'];
+                        $errors[] = "Requested quantity for $name exceeds available stock.";
+
+                        // Return the previous quantity in case of an error
+                        echo json_encode(['success' => false, 'error' => implode(", ", $errors), 'oid' => $oid, 'previous_quantity' => $row['previous_quantity']]);
+                        return;
+                    } else {
+                        $sql = "UPDATE order_details SET quantity = $quantity WHERE OID = $oid";
+
+                        if ($conn->query($sql) === TRUE) {
+                            $sql = "SELECT p.current_price, od.quantity
+                                    FROM order_details od
+                                    JOIN products p ON p.pid = od.o_product
+                                    WHERE od.OID = $oid";
+                            $result = $conn->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                $totalItemPrice = $row['current_price'] * $row['quantity'];
+                                $updatedItems[] = [
+                                    'oid' => $oid,
+                                    'total_item_price' => $totalItemPrice
+                                ];
+                            }
+                        } else {
+                            $errors[] = "Error updating OID $oid: " . $conn->error;
+                        }
                     }
-                } else {
-                    $errors[] = "Error updating OID $oid: " . $conn->error;
                 }
             }
 

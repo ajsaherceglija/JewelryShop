@@ -32,6 +32,12 @@ function updateQuantity(quantities) {
                         });
                         alert('Quantities updated successfully.');
                     } else {
+                        // Reset the quantity input to the previous value fetched from the server
+                        const row = document.querySelector(`tr[data-oid="${response.oid}"]`);
+                        if (row) {
+                            const input = row.querySelector(`input[name="quantity"][data-oid="${response.oid}"]`);
+                            input.value = response.previous_quantity;
+                        }
                         alert('Failed to update quantities: ' + response.error);
                     }
                 } catch (e) {

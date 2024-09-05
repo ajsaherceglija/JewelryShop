@@ -1,8 +1,8 @@
 body {
     font-family: "Pensum Display", serif;
-    background-image: url("images/background.jpg");
+    background: url("images/background.jpg")  no-repeat center;
     background-size: cover;
-    background-position: center;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
     color: #333;
