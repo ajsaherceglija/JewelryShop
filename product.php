@@ -136,13 +136,13 @@ $conn->close();
 
 <section id="reviews">
     <h2>Reviews</h2>
-    <p>Average Rating:
+    <p>Average Rating:</p>
         <?php
         for ($i = 0; $i < floor($avg_rating); $i++) {
             echo '<i class="fa fa-star" style="color: gold;"></i>';
         }
 
-        if ($avg_rating - floor($avg_rating) >= 0.0) {
+        if ($avg_rating - floor($avg_rating) >= 0.1) {
             echo '<i class="fa fa-star-half-o" style="color: gold;"></i>';
         }
 
@@ -151,7 +151,6 @@ $conn->close();
         }
         ?>
         (<?php echo round($avg_rating, 1); ?> / 5)
-    </p>
     <ul>
         <?php
         if ($result_reviews && $result_reviews->num_rows > 0) {

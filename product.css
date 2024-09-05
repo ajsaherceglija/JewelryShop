@@ -186,6 +186,10 @@ body {
     margin-bottom: 20px;
 }
 
+#reviews p{
+    color: #b99976;
+}
+
 #reviews ul {
     list-style: none;
     padding: 0;
