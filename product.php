@@ -22,7 +22,6 @@ function getProductDetails($product_id) {
     return null;
 }
 
-
 if (isset($_GET['wishlist'])) {
     if ($_GET['wishlist'] == 'added') {
         echo '<p class="wishlist-message">Product added to wishlist.</p>';
@@ -91,6 +90,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $p_name; ?></title>
     <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="includes/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -136,13 +136,29 @@ $conn->close();
 
 <section id="reviews">
     <h2>Reviews</h2>
-    <p>Average Rating: <?php echo $avg_rating; ?> / 5</p>
+    <p>Average Rating:
+        <?php
+        for ($i = 0; $i < floor($avg_rating); $i++) {
+            echo '<i class="fa fa-star" style="color: gold;"></i>';
+        }
+
+        if ($avg_rating - floor($avg_rating) >= 0.0) {
+            echo '<i class="fa fa-star-half-o" style="color: gold;"></i>';
+        }
+
+        for ($i = ceil($avg_rating); $i < 5; $i++) {
+            echo '<i class="fa fa-star-o" style="color: gold;"></i>';
+        }
+        ?>
+        (<?php echo round($avg_rating, 1); ?> / 5)
+    </p>
     <ul>
         <?php
         if ($result_reviews && $result_reviews->num_rows > 0) {
             while ($row = $result_reviews->fetch_assoc()) {
                 ?>
                 <li class="review-item">
+                    <p class="reviewer-name">- <?php echo $row['reviewer_name']; ?></p>
                     <span><?php echo $row['comment']; ?></span>
                 </li>
                 <?php
@@ -163,4 +179,5 @@ $conn->close();
     </form>
 </section>
 </body>
+<?php require 'includes/footer.php'?>
 </html>
