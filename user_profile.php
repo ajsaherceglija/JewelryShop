@@ -15,6 +15,8 @@ if ($result->num_rows == 0) {
 
 $user = $result->fetch_assoc();
 
+$is_admin = (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'admin');
+
 function updateProfile($conn, $user_id, $email, $f_name, $l_name, $dob, $phone) {
     $sql = "SELECT email, f_name, l_name, DOB, phone FROM people WHERE PID='$user_id'";
     $result = $conn->query($sql);
@@ -218,6 +220,11 @@ $addresses = getAddresses($conn, $user_id);
             <button class="btn" type="submit" name="add_address">Add Address</button>
         </form>
     </div>
+    <?php if ($is_admin): ?>
+        <button class="btn">
+            <a href="admin/admin_page.php" style="text-decoration: none; color: inherit;">Go to Admin Panel</a>
+        </button>
+    <?php endif; ?>
 </div>
 </body>
 <script src="includes/header.js"></script>
