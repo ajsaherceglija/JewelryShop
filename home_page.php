@@ -25,6 +25,26 @@
 <div class="header-image">
     <h1>PORODICA KARALIĆ</h1>
 </div>
+
+<h2 class="section-title">Featured Collection</h2>
+<div class="featured-collection">
+    <div class="featured-product">
+        <img src="images/necklace1.jpg" alt="Featured Necklace">
+        <h3>Exquisite Diamond Necklace</h3>
+        <a href="product.php?pid=51" class="btn">View Details</a>
+    </div>
+    <div class="featured-product">
+        <img src="images/ring3.jpg" alt="Featured Ring">
+        <h3>Elegant Engagement Ring</h3>
+        <a href="product.php?pid=43" class="btn">View Details</a>
+    </div>
+    <div class="featured-product">
+        <img src="images/earring1.jpg" alt="Featured Earrings">
+        <h3>Luxury Gold Earrings</h3>
+        <a href="product.php?pid=46" class="btn">View Details</a>
+    </div>
+</div>
+
 <h2 class="popular-picks">Gallery</h2>
 <div class="container">
     <div class="slider">
