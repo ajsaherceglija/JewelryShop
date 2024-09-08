@@ -28,7 +28,7 @@
         </div>
 
         <div class="footerBottom">
-            <p>Copyright &copy;2024 </p>
+            <p>&copy 2024 Jewelry Porodica Karalić</p>
         </div>
     </div>
 </footer>

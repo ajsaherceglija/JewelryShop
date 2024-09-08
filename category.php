@@ -1,4 +1,5 @@
-<?php require 'includes/header_sessions.php'; ?>
+<?php global $conn;
+require 'includes/header_sessions.php'; ?>
 <?php require 'includes/db_connection.php'; ?>
 
 <!doctype html>

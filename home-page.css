@@ -12,13 +12,6 @@ body {
     min-height: 100vh;
 }
 
-@media screen and (max-width: 1100px) {
-
-}
-@media screen and (max-width: 500px) {
-
-}
-
 .header-image{
     display: flex;
     align-items: center;
@@ -39,8 +32,7 @@ body {
 }
 
 .container {
-    padding-left: 16%;
-    max-width: 1200px;
+    padding: 0 16%;
     width: 95%;
 }
 
@@ -160,8 +152,8 @@ body {
     }
 
     .slider .image-list .image-item {
-        width: 280px;
-        height: 380px;
+        width: 250px;
+        height: 300px;
     }
 
     .slider-scrollbar .scrollbar-thumb {
