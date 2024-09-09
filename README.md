@@ -37,13 +37,3 @@ The Jewelry Shop Karalić project was deployed on an Ubuntu instance created on 
 Utilizing Infrastructure-as-aService, a physical design of the platform was designed.
 
 http://130.61.95.88/home_page.php
-
-## Credentials
-### Admin
-Username: eminakaralic
-
-Password: emina
-### User
-Username: ajsaherceglija
-
-Password: ajsa
