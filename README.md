@@ -31,3 +31,19 @@ of various people
 - Each order has one address to be shipped to and each address can be related to many
 orders
 - Each order can have many products and each product can be in many orders
+
+## Cloud
+The Jewelry Shop Karalić project was deployed on an Ubuntu instance created on Oracle Cloud. 
+Utilizing Infrastructure-as-aService, a physical design of the platform was designed.
+
+http://130.61.95.88/home_page.php
+
+## Credentials
+### Admin
+Username: eminakaralic
+
+Password: emina
+### User
+Username: ajsaherceglija
+
+Password: ajsa
